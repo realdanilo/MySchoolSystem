@@ -26,11 +26,11 @@ namespace MySchoolSystem
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            //services.AddDbContext<MyAppDbContext>(
-            //    option => option.UseSqlServer(Configuration.GetConnectionString("SQLServer"))
-            //    );
             services.AddDbContext<MyAppDbContext>(
-               option => option.UseSqlServer(Configuration["SQLServerSecret"]));
+                option => option.UseSqlServer(Configuration.GetConnectionString("SQLServer"))
+                );
+            //services.AddDbContext<MyAppDbContext>(
+            //   option => option.UseSqlServer(Configuration["SQLServerSecret"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

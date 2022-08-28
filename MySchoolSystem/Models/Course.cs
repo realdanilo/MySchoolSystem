@@ -1,19 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MySchoolSystem.Models
 {
     public class Course
     {
-        public Course()
-        {
-            this.CreatedAt = DateTime.Now;
-        }
         [Key]
         public int Id { get; set; }
+
         [Required]
+        [Display(Name = "Course Name")]
         public string Subject { get; set; }
+
+        [Required]
+        public int Credits { get; set; }
+
+        [Display(Name = "Created At")]
         public DateTime CreatedAt { get;  }
+
+        [Display(Name = "Last Update")]
         public DateTime LastUpdated { get; set; }
+
+        public virtual ICollection<Instructor> Instructor { get; set; }
+
     }
 }

@@ -9,8 +9,10 @@ using MySchoolSystem.Models;
 
 namespace MySchoolSystem.Controllers
 {
+    [BindProperties]
     public class CourseController : Controller
     {
+        public Course Course { get; set; }
         private readonly MyAppDbContext _context;
 
         public CourseController(MyAppDbContext context)
@@ -53,10 +55,11 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Subject,LastUpdated")] Course course)
+        public async Task<IActionResult> Create(Course course)
         {
             if (ModelState.IsValid)
             {
+                course.LastUpdated = DateTime.Now;
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -85,7 +88,7 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Subject,LastUpdated")] Course course)
+        public async Task<IActionResult> Edit(int id,Course course)
         {
             if (id != course.Id)
             {
