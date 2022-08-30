@@ -22,7 +22,7 @@ namespace MySchoolSystem.Models
         [Display(Name = "Last Update")]
         public DateTime LastUpdated { get; set; }
 
-        public virtual ICollection<Instructor> Instructor { get; set; }
+       
 
     }
 }
