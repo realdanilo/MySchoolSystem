@@ -17,7 +17,6 @@ namespace MySchoolSystem.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        public virtual Course Course { get; set; }
-
+       
     }
 }

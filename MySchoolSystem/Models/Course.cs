@@ -17,12 +17,13 @@ namespace MySchoolSystem.Models
         public int Credits { get; set; }
 
         [Display(Name = "Created At")]
-        public DateTime CreatedAt { get;  }
+        public DateTime CreatedAt { get; set; }
 
         [Display(Name = "Last Update")]
         public DateTime LastUpdated { get; set; }
 
-       
+       [Required]
+        public Instructor Instructor { get; set; }
 
     }
 }

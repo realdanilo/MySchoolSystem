@@ -21,11 +21,9 @@ namespace MySchoolSystem.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            List<Course> courses = await _context.Courses.ToListAsync();
-            
-            return View(courses);
+            return View();
         }
 
         public IActionResult Privacy()

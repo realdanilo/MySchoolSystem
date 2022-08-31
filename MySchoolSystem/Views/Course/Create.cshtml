@@ -1,4 +1,4 @@
-@model MySchoolSystem.Models.Course
+@model MySchoolSystem.Models.ViewModels.CourseViewModel;
 @{
     ViewData["Title"] = "Create";
 
@@ -17,15 +17,17 @@
                 <span asp-validation-for="Subject" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Instructor" class="control-label"></label>
-                <select name="Instructor" id="Instructor" class="form-control">
-                    @foreach (var i in ViewBag.Instructors)
-                    {
-                        <option value="@i.Id">@i.FirstName</option>
-                    }
-                </select>
-                <span asp-validation-for="LastUpdated" class="text-danger"></span>
+                <label asp-for="Credits" class="control-label"></label>
+                <input asp-for="Credits" class="form-control" />
+                <span asp-validation-for="Credits" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="InstructorId" class="control-label"></label>
+                <select asp-for="InstructorId" class="form-control" asp-items="Model.Instructors">
+                </select>
+                <span asp-validation-for="InstructorId" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -36,6 +38,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -13,5 +13,9 @@ namespace MySchoolSystem.Models
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<LetterGrade> LetterGrades { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
     }
 }

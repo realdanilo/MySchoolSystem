@@ -13,7 +13,8 @@ namespace MySchoolSystem.Controllers
     [BindProperties]
     public class CourseController : Controller
     {
-        public Course Course { get; set; }
+        //public Course Course { get; set; }
+        public CourseViewModel courseVM { get; set; }
         private readonly MyAppDbContext _context;
 
         public CourseController(MyAppDbContext context)
@@ -24,7 +25,9 @@ namespace MySchoolSystem.Controllers
         // GET: Course
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Courses.ToListAsync());
+            return View(await _context.Courses
+                .Include(p => p.Instructor)
+                .ToListAsync());
         }
 
         // GET: Course/Details/5
@@ -35,9 +38,10 @@ namespace MySchoolSystem.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses
+            Course course = await _context.Courses
+                .Include(p => p.Instructor)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
+            
             if (course == null)
             {
                 return NotFound();
@@ -49,11 +53,10 @@ namespace MySchoolSystem.Controllers
         // GET: Course/Create
         public async Task<IActionResult> Create()
         {
-            ICollection<Instructor> instructors = await _context.Instructors.ToListAsync();
-            //work on InstructorsViewModel
-            ViewBag.Instructors = instructors;
-
-            return View();
+            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            CourseViewModel courseViewModel = new CourseViewModel(instructors);
+            
+            return View(courseViewModel);
         }
 
         // POST: Course/Create
@@ -61,16 +64,25 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Course course)
+        public async Task<IActionResult> Create(CourseViewModel courseVM)
         {
             if (ModelState.IsValid)
             {
-                course.LastUpdated = DateTime.Now;
-                _context.Add(course);
+                Course newCourse = new Course();
+                Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+
+                newCourse.CreatedAt = DateTime.Now;
+                newCourse.Subject = courseVM.Subject;
+                newCourse.Credits = courseVM.Credits;
+                newCourse.LastUpdated = DateTime.Now;
+                newCourse.Instructor = instructor;
+                _context.Add(newCourse);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            courseVM = new CourseViewModel(instructors);
+            return View(courseVM);
         }
 
         // GET: Course/Edit/5
@@ -80,13 +92,20 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
-
             var course = await _context.Courses.FindAsync(id);
+
             if (course == null)
             {
                 return NotFound();
             }
-            return View(course);
+            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            courseVM = new CourseViewModel(instructors);
+            courseVM.Credits = course.Credits;
+            courseVM.InstructorId = course.Instructor.Id;
+            courseVM.Subject = course.Subject;
+            //check
+            courseVM.Id = id;
+            return View(courseVM);
         }
 
         // POST: Course/Edit/5
@@ -94,9 +113,10 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,Course course)
+        public async Task<IActionResult> Edit(int id,CourseViewModel courseVM)
         {
-            if (id != course.Id)
+            //check
+            if (id != courseVM.Id)
             {
                 return NotFound();
             }
@@ -105,23 +125,30 @@ namespace MySchoolSystem.Controllers
             {
                 try
                 {
-                    _context.Update(course);
+                    
+                    Course newCourse = new Course();
+                    Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+
+                    newCourse.CreatedAt = DateTime.Now;
+                    newCourse.Subject = courseVM.Subject;
+                    newCourse.Credits = courseVM.Credits;
+                    newCourse.LastUpdated = DateTime.Now;
+                    newCourse.Instructor = instructor;
+                    _context.Add(newCourse);
                     await _context.SaveChangesAsync();
+                  
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
-                    if (!CourseExists(course.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw new Exception(e.Message);
+                  
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            courseVM = new CourseViewModel(instructors);
+            return View(courseVM);
         }
 
         // GET: Course/Delete/5
