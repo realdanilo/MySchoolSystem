@@ -99,7 +99,7 @@ namespace MySchoolSystem.Controllers
                 return NotFound();
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            courseVM = new CourseViewModel(instructors);
+            CourseViewModel courseVM = new CourseViewModel(instructors);
             courseVM.Credits = course.Credits;
             courseVM.InstructorId = course.Instructor.Id;
             courseVM.Subject = course.Subject;
@@ -126,15 +126,17 @@ namespace MySchoolSystem.Controllers
                 try
                 {
                     
-                    Course newCourse = new Course();
+                    //Course newCourse = new Course();
+                    Course updateCourse = await _context.Courses.FindAsync(courseVM.Id);
                     Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
 
-                    newCourse.CreatedAt = DateTime.Now;
-                    newCourse.Subject = courseVM.Subject;
-                    newCourse.Credits = courseVM.Credits;
-                    newCourse.LastUpdated = DateTime.Now;
-                    newCourse.Instructor = instructor;
-                    _context.Add(newCourse);
+                    updateCourse.CreatedAt = DateTime.Now;
+                    updateCourse.Subject = courseVM.Subject;
+                    updateCourse.Credits = courseVM.Credits;
+                    updateCourse.LastUpdated = DateTime.Now;
+                    updateCourse.Instructor = instructor;
+                    //_context.Add(newCourse);
+                    _context.Update(updateCourse);
                     await _context.SaveChangesAsync();
                   
                 }
@@ -180,9 +182,9 @@ namespace MySchoolSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CourseExists(int id)
-        {
-            return _context.Courses.Any(e => e.Id == id);
-        }
+        //private bool CourseExists(int id)
+        //{
+        //    return _context.Courses.Any(e => e.Id == id);
+        //}
     }
 }
