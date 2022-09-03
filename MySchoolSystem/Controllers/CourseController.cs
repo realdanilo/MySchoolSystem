@@ -72,7 +72,7 @@ namespace MySchoolSystem.Controllers
                 Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
 
                 newCourse.CreatedAt = DateTime.Now;
-                newCourse.Subject = courseVM.Subject;
+                //newCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                 newCourse.Credits = courseVM.Credits;
                 newCourse.LastUpdated = DateTime.Now;
                 newCourse.Instructor = instructor;
@@ -102,7 +102,7 @@ namespace MySchoolSystem.Controllers
             CourseViewModel courseVM = new CourseViewModel(instructors);
             courseVM.Credits = course.Credits;
             courseVM.InstructorId = course.Instructor.Id;
-            courseVM.Subject = course.Subject;
+            //courseVM.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
             //check
             courseVM.Id = id;
             return View(courseVM);
@@ -131,7 +131,7 @@ namespace MySchoolSystem.Controllers
                     Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
 
                     updateCourse.CreatedAt = DateTime.Now;
-                    updateCourse.Subject = courseVM.Subject;
+                    //updateCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                     updateCourse.Credits = courseVM.Credits;
                     updateCourse.LastUpdated = DateTime.Now;
                     updateCourse.Instructor = instructor;

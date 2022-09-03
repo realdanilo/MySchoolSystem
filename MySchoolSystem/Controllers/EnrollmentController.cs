@@ -21,7 +21,9 @@ namespace MySchoolSystem.Controllers
         // GET: Enrollment
         public async Task<IActionResult> Index()
         {
-            var myAppDbContext = _context.Enrollments.Include(e => e.Course).Include(e => e.Grade).Include(e => e.Instructor).Include(e => e.Student);
+            var myAppDbContext = _context.Enrollments
+                .Include(e => e.Course).
+                Include(e => e.Grade).Include(e => e.Student);
             return View(await myAppDbContext.ToListAsync());
         }
 
@@ -36,7 +38,6 @@ namespace MySchoolSystem.Controllers
             var enrollment = await _context.Enrollments
                 .Include(e => e.Course)
                 .Include(e => e.Grade)
-                .Include(e => e.Instructor)
                 .Include(e => e.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (enrollment == null)
@@ -53,7 +54,9 @@ namespace MySchoolSystem.Controllers
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject");
             ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade");
             ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName");
+            //done
             ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName");
+            ViewData["Courses"] = new SelectList(_context.Courses, "Id", "Subject");
             return View();
         }
 
@@ -70,10 +73,10 @@ namespace MySchoolSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
-            ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
-            ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
+            //ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
+            //ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
+            //ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
+            //ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
             return View(enrollment);
         }
 
@@ -90,10 +93,10 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
-            ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
-            ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
+            //ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
+            //ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
+            //ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
+            //ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
             return View(enrollment);
         }
 
@@ -129,10 +132,10 @@ namespace MySchoolSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
-            ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
-            ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
+            //ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Subject", enrollment.CourseId);
+            //ViewData["LetterGradeId"] = new SelectList(_context.LetterGrades, "Id", "Grade", enrollment.LetterGradeId);
+            //ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FirstName", enrollment.InstructorId);
+            //ViewData["StudentId"] = new SelectList(_context.Students, "Id", "FirstName", enrollment.StudentId);
             return View(enrollment);
         }
 
@@ -147,7 +150,6 @@ namespace MySchoolSystem.Controllers
             var enrollment = await _context.Enrollments
                 .Include(e => e.Course)
                 .Include(e => e.Grade)
-                .Include(e => e.Instructor)
                 .Include(e => e.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (enrollment == null)

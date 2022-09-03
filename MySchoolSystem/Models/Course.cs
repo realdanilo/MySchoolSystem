@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MySchoolSystem.Models
@@ -11,7 +10,7 @@ namespace MySchoolSystem.Models
 
         [Required]
         [Display(Name = "Course Name")]
-        public string Subject { get; set; }
+        public Subject Subject { get; set; }
 
         [Required]
         public int Credits { get; set; }
