@@ -25,7 +25,7 @@ namespace MySchoolSystem.Models
         [Display(Name = "Open for enrollment")]
         public bool OpenForEnrollment { get; set; }
 
-        public ICollection<Task> Tasks { get; set; } //check
+        public ICollection<Todo> Tasks { get; set; } //check
         [Display(Name = "Submitted Assignments")]
         public ICollection<Submitted_Assignments> Submitted_Assignments { get; set; } //check
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MySchoolSystem.Models
 {
-    public class Task
+    public class Todo
     {
        [Key]
         public int  Id { get; set; }

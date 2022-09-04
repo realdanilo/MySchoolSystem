@@ -1,0 +1,60 @@
+@model MySchoolSystem.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Enrollment</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Period)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Period.SeasonName)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Student)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Student.FirstName)  @Html.DisplayFor(model => model.Student.LastName)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Grade)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Grade.Grade)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Course.Subject)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Course.Instructor.FirstName) @Html.DisplayFor(model => model.Course.Instructor.LastName)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Dropped)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Dropped)
+        </dd>
+        <dt class="col-sm-4">
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

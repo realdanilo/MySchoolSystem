@@ -9,7 +9,7 @@ namespace MySchoolSystem.Models
         public int Id { get; set; }
 
         //submit a task
-        public Task Task { get; set; }
+        public Todo Task { get; set; }
 
         //submit to specific enrollment 
         public Enrollment Enrollment { get; set; }

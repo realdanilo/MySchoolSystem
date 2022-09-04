@@ -12,7 +12,7 @@ namespace MySchoolSystem.Models
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Todo> Tasks { get; set; }
         public DbSet<Period> Periods { get; set; }
         public DbSet<LetterGrade> LetterGrades { get; set; }
         public DbSet<Submitted_Assignments> Submitted_Assignments { get; set; }
