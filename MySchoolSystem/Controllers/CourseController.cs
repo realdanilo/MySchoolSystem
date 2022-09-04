@@ -27,6 +27,7 @@ namespace MySchoolSystem.Controllers
         {
             return View(await _context.Courses
                 .Include(p => p.Instructor)
+                .Include(p => p.Subject)
                 .ToListAsync());
         }
 
@@ -40,6 +41,7 @@ namespace MySchoolSystem.Controllers
 
             Course course = await _context.Courses
                 .Include(p => p.Instructor)
+                .Include(p => p.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (course == null)
@@ -54,7 +56,9 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Create()
         {
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            CourseViewModel courseViewModel = new CourseViewModel(instructors);
+            List<Subject> subjects = await _context.Subjects.ToListAsync();
+
+            CourseViewModel courseViewModel = new CourseViewModel(instructors, subjects);
             
             return View(courseViewModel);
         }
@@ -70,18 +74,21 @@ namespace MySchoolSystem.Controllers
             {
                 Course newCourse = new Course();
                 Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
 
                 newCourse.CreatedAt = DateTime.Now;
                 //newCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                 newCourse.Credits = courseVM.Credits;
                 newCourse.LastUpdated = DateTime.Now;
                 newCourse.Instructor = instructor;
+                newCourse.Subject = subject;
                 _context.Add(newCourse);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            courseVM = new CourseViewModel(instructors);
+            List<Subject> subjects = await _context.Subjects.ToListAsync();
+            courseVM = new CourseViewModel(instructors, subjects);
             return View(courseVM);
         }
 
@@ -99,9 +106,11 @@ namespace MySchoolSystem.Controllers
                 return NotFound();
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            CourseViewModel courseVM = new CourseViewModel(instructors);
+            List<Subject> subjects = await _context.Subjects.ToListAsync();
+            CourseViewModel courseVM = new CourseViewModel(instructors, subjects);
             courseVM.Credits = course.Credits;
             courseVM.InstructorId = course.Instructor.Id;
+            courseVM.SubjectId = course.Subject.Id;
             //courseVM.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
             //check
             courseVM.Id = id;
@@ -129,12 +138,14 @@ namespace MySchoolSystem.Controllers
                     //Course newCourse = new Course();
                     Course updateCourse = await _context.Courses.FindAsync(courseVM.Id);
                     Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                    Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
 
                     updateCourse.CreatedAt = DateTime.Now;
                     //updateCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                     updateCourse.Credits = courseVM.Credits;
                     updateCourse.LastUpdated = DateTime.Now;
                     updateCourse.Instructor = instructor;
+                    updateCourse.Subject = subject;
                     //_context.Add(newCourse);
                     _context.Update(updateCourse);
                     await _context.SaveChangesAsync();
@@ -149,7 +160,8 @@ namespace MySchoolSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            courseVM = new CourseViewModel(instructors);
+            List<Subject> subjects = await _context.Subjects.ToListAsync();
+            courseVM = new CourseViewModel(instructors, subjects);
             return View(courseVM);
         }
 
@@ -162,6 +174,7 @@ namespace MySchoolSystem.Controllers
             }
 
             var course = await _context.Courses
+                .Include(p => p.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {

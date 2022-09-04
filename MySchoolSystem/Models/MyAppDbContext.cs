@@ -15,6 +15,7 @@ namespace MySchoolSystem.Models
         public DbSet<Task> Tasks { get; set; }
         public DbSet<Period> Periods { get; set; }
         public DbSet<LetterGrade> LetterGrades { get; set; }
+        public DbSet<Submitted_Assignments> Submitted_Assignments { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

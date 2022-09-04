@@ -1,10 +1,11 @@
-@model IEnumerable<MySchoolSystem.Models.Course>
+@model IEnumerable<MySchoolSystem.Models.Subject>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -12,13 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Subject)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Credits)
-            </th>
-            <th>
-                Teacher
+                @Html.DisplayNameFor(model => model.SubjectName)
             </th>
             <th></th>
         </tr>
@@ -27,13 +22,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Subject.SubjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Credits)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Instructor.FirstName) @Html.DisplayFor(modelItem => item.Instructor.LastName)
+                @Html.DisplayFor(modelItem => item.SubjectName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
