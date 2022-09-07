@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MySchoolSystem.Models
@@ -24,5 +25,8 @@ namespace MySchoolSystem.Models
        [Required]
         public Instructor Instructor { get; set; }
 
+        //course HAS , but not required, todos
+
+        public ICollection<Todo> Todos { get; set; }
     }
 }

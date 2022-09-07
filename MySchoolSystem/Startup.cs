@@ -55,6 +55,13 @@ namespace MySchoolSystem
 
             app.UseEndpoints(endpoints =>
             {
+                //testing nested route; check CourseId required at controller (?)
+                //GET: course/1/todos 
+                //GET: course/1/todos/1  
+                endpoints.MapControllerRoute(
+                    name: "todos",
+                    pattern: "{controller=Course}/{CourseId}/{action=Todos}/{TodoId?}");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -195,9 +195,36 @@ namespace MySchoolSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //private bool CourseExists(int id)
-        //{
-        //    return _context.Courses.Any(e => e.Id == id);
-        //}
+        private bool CourseExists(int id)
+        {
+            return _context.Courses.Any(e => e.Id == id);
+        }
+
+        // GET: Course/{CourseId}/Todos
+        public async Task<IActionResult> Todos(int CourseId)
+        {
+            //can save api calls
+            //if (String.IsNullOrEmpty(CourseId.ToString())) return RedirectToAction(nameof(Index))
+            bool courseExists =  CourseExists(CourseId);
+            //can add error msg
+            if (!courseExists) return RedirectToAction(nameof(Index));
+
+            Course course = await _context.Courses.Include(p => p.Todos).FirstOrDefaultAsync(c => c.Id == CourseId);
+            List<Todo> courseTodos = course.Todos.ToList();
+            ViewBag.CourseId = CourseId;
+            return View(courseTodos);
+        }
+
+        //POST: Course/{CourseId}/Todo
+        [HttpPost]
+        public async Task<IActionResult> AddTodo([FromBody] string value,int CourseId)
+        {
+            Console.WriteLine("hit");
+            Console.WriteLine(CourseId);
+            Console.WriteLine(value);
+            return RedirectToAction(nameof(Todos),CourseId.ToString());
+        }
+
+
     }
 }
