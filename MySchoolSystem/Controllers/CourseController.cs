@@ -15,6 +15,7 @@ namespace MySchoolSystem.Controllers
     {
         //public Course Course { get; set; }
         public CourseViewModel courseVM { get; set; }
+        public Course_TodoViewModel course_todoVM { get; set; }
         private readonly MyAppDbContext _context;
 
         public CourseController(MyAppDbContext context)
@@ -209,20 +210,48 @@ namespace MySchoolSystem.Controllers
             //can add error msg
             if (!courseExists) return RedirectToAction(nameof(Index));
 
-            Course course = await _context.Courses.Include(p => p.Todos).FirstOrDefaultAsync(c => c.Id == CourseId);
-            List<Todo> courseTodos = course.Todos.ToList();
-            ViewBag.CourseId = CourseId;
-            return View(courseTodos);
+            Course course = await _context.Courses
+                .Include(p => p.Todos)
+                .Include(p => p.Subject)
+                .FirstOrDefaultAsync(c => c.Id == CourseId);
+            Course_TodoViewModel courseTodoVM = new Course_TodoViewModel();
+            courseTodoVM.Todos = course.Todos.ToList();
+
+            ViewBag.Subject = course.Subject.SubjectName.ToString();
+
+            return View(courseTodoVM);
         }
 
         //POST: Course/{CourseId}/Todo
         [HttpPost]
-        public async Task<IActionResult> AddTodo([FromBody] string value,int CourseId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTodo(Course_TodoViewModel course_todoVM, int CourseId)
         {
-            Console.WriteLine("hit");
-            Console.WriteLine(CourseId);
-            Console.WriteLine(value);
-            return RedirectToAction(nameof(Todos),CourseId.ToString());
+            ViewBag.Message = "";
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Course course = await _context.Courses.Include(p => p.Todos).FirstOrDefaultAsync(c => c.Id == CourseId);
+                    Todo newTodo = new Todo();
+                    newTodo.Type = course_todoVM.Type;
+                    newTodo.FileLocation = course_todoVM.FileLocation;
+                    newTodo.Points = course_todoVM.Points;
+                    newTodo.ExpirationDate = course_todoVM.ExpirationDate;
+
+                    course.Todos.Add(newTodo);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    ViewBag.Message = $" Error while creating a todo-- {e.Message}";
+                    throw new Exception(e.Message);
+                }
+
+            }
+            ViewBag.Message = "Invalid inputs";
+            // fix viebag message pass to redirct route
+            return RedirectToAction(nameof(Todos), new { CourseId });
         }
 
 

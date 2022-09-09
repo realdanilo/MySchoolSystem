@@ -1,57 +1,81 @@
-@model List<MySchoolSystem.Models.Todo>
+@model MySchoolSystem.Models.ViewModels.Course_TodoViewModel;
 
 @{ ViewData["Title"] = "Todos"; }
-<p>Todos for: @ViewBag.CourseId</p>
+<h5>Subject: <span class="text-muted">@ViewBag.Subject </span></h5>
+<p>@ViewBag.Message</p>
 
-@*sort by date*@
-@foreach (var t in Model)
-{
-<p>@t.Id</p>
-<p>@t.Type</p>
 
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpirationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rubric)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @*sort by date*@
+        @foreach (var t in Model.Todos)
+        {
+        <tr>
+            @*<td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>*@
+            <td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>
+            <td>@t.Type</td>
+            <td>@t.Rubric</td>
+            <td>@t.Points</td>
+        </tr>
 }
 
+    </tbody>
+</table>
+
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Add a todo
+<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">
+    Create assignment
 </button>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" asp-controller="Course" asp-route-CourseId=@ViewBag.CourseId asp-action="AddTodo">
+        <form method="post" class="modal-content" asp-controller="Course" asp-route-CourseId=@ViewBag.CourseId asp-action="AddTodo">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Creating a new todo</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Creating assingment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="Type"   class="control-label"></label>
-                    <input  class="form-control" />
-                    <span class="text-danger"></span>
+                    <label asp-for="Type" class="control-label"></label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label  class="control-label"></label>
-                    <input  class="form-control" />
-                    <span  class="text-danger"></span>
+                    <label asp-for="Rubric" class="control-label"></label>
+                    <input asp-for="Rubric" class="form-control" />
+                    <span asp-validation-for="Rubric" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"></label>
-                    <input class="form-control" />
-                    <span class="text-danger"></span>
+                    <label asp-for="FileLocation" class="control-label"></label>
+                    <input asp-for="FileLocation" class="form-control" />
+                    <span asp-validation-for="FileLocation" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label  class="control-label"></label>
-                    <input  class="form-control" />
-                    <span  class="text-danger"></span>
+                    <label asp-for="ExpirationDate" class="control-label"></label>
+                    <input asp-for="ExpirationDate" class="form-control" />
+                    <span asp-validation-for="ExpirationDate" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label  class="control-label"></label>
-                    <input class="form-control" />
-                    <span class="text-danger"></span>
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -60,3 +84,8 @@
         </form>
     </div>
 </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
