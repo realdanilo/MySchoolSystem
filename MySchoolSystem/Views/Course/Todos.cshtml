@@ -1,7 +1,7 @@
 @model MySchoolSystem.Models.ViewModels.Course_TodoViewModel;
 
 @{ ViewData["Title"] = "Todos"; }
-<h5>Subject: <span class="text-muted">@ViewBag.Subject </span></h5>
+<h5>Subject: <span class="text-muted">@Model.Subject </span></h5>
 <p>@ViewBag.Message</p>
 
 
@@ -46,7 +46,7 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="post" class="modal-content" asp-controller="Course" asp-route-CourseId=@ViewBag.CourseId asp-action="AddTodo">
+        <form method="post" class="modal-content" asp-controller="Course" asp-route-CourseId=@Model.Id asp-action="AddTodo">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Creating assingment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -71,10 +71,16 @@
                     <span asp-validation-for="FileLocation" class="text-danger"></span>
                 </div>
                 <div class="form-group">
+                    <label asp-for="Points" class="control-label"></label>
+                    <input asp-for="Points" class="form-control" />
+                    <span asp-validation-for="Points" class="text-danger"></span>
+                </div>
+                <div class="form-group">
                     <label asp-for="ExpirationDate" class="control-label"></label>
                     <input asp-for="ExpirationDate" class="form-control" />
                     <span asp-validation-for="ExpirationDate" class="text-danger"></span>
                 </div>
+                <input hidden asp-for="Id" class="form-control" />
 
             </div>
             <div class="modal-footer">

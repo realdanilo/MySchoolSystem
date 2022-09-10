@@ -6,8 +6,11 @@ namespace MySchoolSystem.Models.ViewModels
 {
     public class Course_TodoViewModel
     {
-        //[Key]
-        //public int Id { get; set; }
+        //verification
+        [Required]
+        public int Id { get; set; }
+        //instead of ViewBag.
+        public string? Subject { get; set; }
 
         [Required]
         [Display(Name = "Enter type of assignment:")]

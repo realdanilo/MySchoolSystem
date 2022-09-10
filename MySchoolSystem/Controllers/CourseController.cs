@@ -13,9 +13,7 @@ namespace MySchoolSystem.Controllers
     [BindProperties]
     public class CourseController : Controller
     {
-        //public Course Course { get; set; }
         public CourseViewModel courseVM { get; set; }
-        public Course_TodoViewModel course_todoVM { get; set; }
         private readonly MyAppDbContext _context;
 
         public CourseController(MyAppDbContext context)
@@ -204,8 +202,7 @@ namespace MySchoolSystem.Controllers
         // GET: Course/{CourseId}/Todos
         public async Task<IActionResult> Todos(int CourseId)
         {
-            //can save api calls
-            //if (String.IsNullOrEmpty(CourseId.ToString())) return RedirectToAction(nameof(Index))
+            //can save api calls  if (String.IsNullOrEmpty(CourseId.ToString())) return RedirectToAction(nameof(Index))
             bool courseExists =  CourseExists(CourseId);
             //can add error msg
             if (!courseExists) return RedirectToAction(nameof(Index));
@@ -216,8 +213,8 @@ namespace MySchoolSystem.Controllers
                 .FirstOrDefaultAsync(c => c.Id == CourseId);
             Course_TodoViewModel courseTodoVM = new Course_TodoViewModel();
             courseTodoVM.Todos = course.Todos.ToList();
-
-            ViewBag.Subject = course.Subject.SubjectName.ToString();
+            courseTodoVM.Id = CourseId;
+            courseTodoVM.Subject = course.Subject.SubjectName.ToString();
 
             return View(courseTodoVM);
         }
@@ -225,33 +222,36 @@ namespace MySchoolSystem.Controllers
         //POST: Course/{CourseId}/Todo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTodo(Course_TodoViewModel course_todoVM, int CourseId)
+        public async Task<IActionResult> AddTodo(int CourseId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
-            ViewBag.Message = "";
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && CourseId == course_todoVM.Id)
             {
                 try
                 {
-                    Course course = await _context.Courses.Include(p => p.Todos).FirstOrDefaultAsync(c => c.Id == CourseId);
+                    Course course = await _context.Courses.Include(p => p.Todos)
+                        .FirstOrDefaultAsync(c => c.Id == course_todoVM.Id);
+
                     Todo newTodo = new Todo();
                     newTodo.Type = course_todoVM.Type;
-                    newTodo.FileLocation = course_todoVM.FileLocation;
+                    newTodo.Rubric = course_todoVM.Rubric;
                     newTodo.Points = course_todoVM.Points;
+                    newTodo.FileLocation = course_todoVM.FileLocation;
                     newTodo.ExpirationDate = course_todoVM.ExpirationDate;
 
+                    _context.Add(newTodo);
                     course.Todos.Add(newTodo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
-                    ViewBag.Message = $" Error while creating a todo-- {e.Message}";
+                    //check
                     throw new Exception(e.Message);
+                    //return RedirectToAction(nameof(Todos), new { CourseId });
                 }
 
             }
-            ViewBag.Message = "Invalid inputs";
-            // fix viebag message pass to redirct route
-            return RedirectToAction(nameof(Todos), new { CourseId });
+            // find a middleware for msg alerts (success, error, etc..)
+            return RedirectToAction(nameof(Todos), new { course_todoVM.Id });
         }
 
 
