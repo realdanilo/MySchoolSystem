@@ -1,6 +1,8 @@
 @model MySchoolSystem.Models.ViewModels.Course_TodoViewModel;
-
 @{ ViewData["Title"] = "Todos"; }
+
+
+
 <h5>Subject: <span class="text-muted">@Model.Subject </span></h5>
 <p>@ViewBag.Message</p>
 
@@ -20,20 +22,28 @@
             <th>
                 @Html.DisplayNameFor(model => model.Points)
             </th>
+            <th>
+               Options
+            </th>
         </tr>
     </thead>
     <tbody>
         @*sort by date*@
-        @foreach (var t in Model.Todos)
+        @foreach (Todo t in Model.Todos)
         {
-        <tr>
-            @*<td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>*@
-            <td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>
-            <td>@t.Type</td>
-            <td>@t.Rubric</td>
-            <td>@t.Points</td>
-        </tr>
-}
+            <tr id="@t.Id">
+                @*<td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>*@
+                <td>@t.ExpirationDate</td>
+                <td>@t.Type</td>
+                <td>@t.Rubric</td>
+                <td>@t.Points</td>
+                <td>
+                    <button onclick="getTodoReady(@t.Id)"
+                        class="btn btn-outline-info"
+                        data-toggle="modal" data-target="#exampleModal">Edit</button>
+                </td>
+            </tr>
+        }
 
     </tbody>
 </table>
@@ -90,7 +100,50 @@
         </form>
     </div>
 </div>
+<script>
+    //make all keys lowercase for inputs
+    function toLowerKeys(obj) {
+        return Object.keys(obj).reduce((accumulator, key) => {
+            accumulator[key.toLowerCase()] = obj[key];
+            return accumulator;
+        }, {});
+    }
+    //clear modal values
+    //check
+    $("#myModal").on("hidden.bs.modal", function () {
+        // put your default event here
+    });
 
+    async function getTodoReady(id) {
+        //can fetch the todo by id, then assign the values to the form
+        let element = document.getElementById(id).id
+        let foundTodo = {};
+
+        let resp = await fetch(`/Todo/JSONDetails/${element}`)
+        foundTodo = toLowerKeys(await resp.json())
+
+        @*console.log(foundTodo)*@
+        //get form
+        let form = document.forms[0]
+        let data = new FormData(form);
+        for (let [key, value] of data) {
+            //if input exists
+            if (document.getElementById(`${key}`)) {
+                //if date, format
+                if (key == "ExpirationDate") {
+                    document.getElementById(`${key}`).value = new Date(foundTodo[key.toLocaleLowerCase()]).toISOString().slice(0,10)
+                } else {
+                    document.getElementById(`${key}`).value = foundTodo[key.toLocaleLowerCase()]
+                }
+                @*console.log(key, foundTodo[key.toLocaleLowerCase()])*@
+            }
+            @*data[key.toLocaleLowerCase()] = foundTodo[key.toLocaleLowerCase()]*@
+            @*console.log(key.toLocaleLowerCase(), foundTodo[key.toLocaleLowerCase()])*@
+        }
+        //set method = put, btns value = update
+    };
+
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

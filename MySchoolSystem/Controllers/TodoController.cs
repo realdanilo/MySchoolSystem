@@ -41,6 +41,23 @@ namespace MySchoolSystem.Controllers
 
             return View(task);
         }
+        // GET: Task/Details/5
+        public async Task<IActionResult> JSONDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            return Json(task);
+        }
 
         // GET: Task/Create
         public IActionResult Create()
