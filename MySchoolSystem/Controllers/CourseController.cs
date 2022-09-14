@@ -254,6 +254,14 @@ namespace MySchoolSystem.Controllers
             return RedirectToAction(nameof(Todos), new { course_todoVM.Id });
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public bool UpdateTodo(int CourseId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        {
+            Console.WriteLine("hit");
+            Console.WriteLine(CourseId);
+            Console.WriteLine(course_todoVM);
+            return true;
+        }
     }
 }

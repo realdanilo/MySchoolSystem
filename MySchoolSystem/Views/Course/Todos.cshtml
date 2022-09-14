@@ -49,7 +49,7 @@
 </table>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">
+<button onclick="getFormReadyClean(@Model.Id)" type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">
     Create assignment
 </button>
 
@@ -90,58 +90,78 @@
                     <input asp-for="ExpirationDate" class="form-control" />
                     <span asp-validation-for="ExpirationDate" class="text-danger"></span>
                 </div>
-                <input hidden asp-for="Id" class="form-control" />
+                <input hidden asp-for="Id" readonly class="form-control" />
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Add</button>
+                <button type="submit" class="btn btn-primary" id="addSubmitBtn">Add</button>
             </div>
         </form>
     </div>
 </div>
 <script>
-    //make all keys lowercase for inputs
+    let foundTodo = {};
+    let form = document.forms[0];
+    const originalForm = form.cloneNode(true);
+    //make all keys lowercase for inputs  
     function toLowerKeys(obj) {
         return Object.keys(obj).reduce((accumulator, key) => {
             accumulator[key.toLowerCase()] = obj[key];
             return accumulator;
         }, {});
     }
-    //clear modal values
-    //check
-    $("#myModal").on("hidden.bs.modal", function () {
-        // put your default event here
-    });
-
+    
     async function getTodoReady(id) {
-        //can fetch the todo by id, then assign the values to the form
-        let element = document.getElementById(id).id
-        let foundTodo = {};
+        try {
+            let resp = await fetch(`/Todo/JSONDetails/${id}`)
+            foundTodo = toLowerKeys(await resp.json())
+            getFormReady(id)
+        }
+        catch (e) {
+            alert(e.message)
+        }
+    }
 
-        let resp = await fetch(`/Todo/JSONDetails/${element}`)
-        foundTodo = toLowerKeys(await resp.json())
+    function getFormReady(id) {
+        @*form.setAttribute("method", "PUT")  >>> method not allowed, left as POST*@
+        form.action = `/Course/${id}/UpdateTodo`
+        document.getElementById("addSubmitBtn").textContent = "Update";
+        //set method = put, btns value = update
 
-        @*console.log(foundTodo)*@
-        //get form
-        let form = document.forms[0]
         let data = new FormData(form);
         for (let [key, value] of data) {
-            //if input exists
             if (document.getElementById(`${key}`)) {
                 //if date, format
                 if (key == "ExpirationDate") {
-                    document.getElementById(`${key}`).value = new Date(foundTodo[key.toLocaleLowerCase()]).toISOString().slice(0,10)
+                    document.getElementById(`${key}`).value = new Date(foundTodo[key.toLocaleLowerCase()]).toISOString().slice(0, 10)
                 } else {
                     document.getElementById(`${key}`).value = foundTodo[key.toLocaleLowerCase()]
                 }
-                @*console.log(key, foundTodo[key.toLocaleLowerCase()])*@
-            }
-            @*data[key.toLocaleLowerCase()] = foundTodo[key.toLocaleLowerCase()]*@
-            @*console.log(key.toLocaleLowerCase(), foundTodo[key.toLocaleLowerCase()])*@
+            }   
         }
-        //set method = put, btns value = update
     };
+
+    function getFormReadyClean(CourseId) {
+        form.action = `/Course/${CourseId}/AddTodo`
+        document.getElementById("addSubmitBtn").textContent = "Add";
+        let data = new FormData(form);
+        for (let [key] of data) {
+            if (document.getElementById(`${key}`)) {
+                //if date, format 
+                if (key == "ExpirationDate") {
+                    document.getElementById(`${key}`).value = new Date().toLocaleDateString()
+                } if (key == "Id") {
+                    document.getElementById(`${key}`).value = CourseId
+                }
+                else {
+                    document.getElementById(`${key}`).value = ""
+                }
+            }
+        }
+    }
+
+
 
 </script>
 
