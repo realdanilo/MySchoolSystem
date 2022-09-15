@@ -198,6 +198,10 @@ namespace MySchoolSystem.Controllers
         {
             return _context.Courses.Any(e => e.Id == id);
         }
+        private bool TodoExists(int id)
+        {
+            return _context.Tasks.Any(e => e.Id == id);
+        }
 
         // GET: Course/{CourseId}/Todos
         public async Task<IActionResult> Todos(int CourseId)
@@ -241,6 +245,7 @@ namespace MySchoolSystem.Controllers
                     _context.Add(newTodo);
                     course.Todos.Add(newTodo);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
@@ -251,17 +256,39 @@ namespace MySchoolSystem.Controllers
 
             }
             // find a middleware for msg alerts (success, error, etc..)
-            return RedirectToAction(nameof(Todos), new { course_todoVM.Id });
+            return RedirectToAction(nameof(Todos));
         }
 
+
+        //POST: Course/{CourseId}/UpdateTodo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public bool UpdateTodo(int CourseId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        public async Task<IActionResult> UpdateTodo(int CourseId, int TodoId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
-            Console.WriteLine("hit");
-            Console.WriteLine(CourseId);
-            Console.WriteLine(course_todoVM);
-            return true;
+            if (ModelState.IsValid)
+            {
+                if (!CourseExists(CourseId) && !TodoExists(CourseId)) return NotFound();
+                try
+                {
+                    Course course = await _context.Courses.Include(p => p.Todos)
+                        .FirstOrDefaultAsync(c => c.Id == CourseId);
+
+                    Todo t = course.Todos.Where(t => t.Id == TodoId).Select(t => t).Single();
+                    t.Type = course_todoVM.Type;
+                    t.Rubric = course_todoVM.Rubric;
+                    t.Points = course_todoVM.Points;
+                    t.FileLocation = course_todoVM.FileLocation;
+                    t.ExpirationDate = course_todoVM.ExpirationDate;
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    throw new Exception(e.Message);
+                }
+
+            }
+            return RedirectToAction(nameof(Todos));
         }
     }
 }

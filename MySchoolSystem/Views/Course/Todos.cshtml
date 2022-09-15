@@ -38,7 +38,7 @@
                 <td>@t.Rubric</td>
                 <td>@t.Points</td>
                 <td>
-                    <button onclick="getTodoReady(@t.Id)"
+                    <button onclick="getTodoReady(@Model.Id, @t.Id)"
                         class="btn btn-outline-info"
                         data-toggle="modal" data-target="#exampleModal">Edit</button>
                 </td>
@@ -112,20 +112,20 @@
         }, {});
     }
     
-    async function getTodoReady(id) {
+    async function getTodoReady(CourseId, TodoId) {
         try {
-            let resp = await fetch(`/Todo/JSONDetails/${id}`)
+            let resp = await fetch(`/Todo/JSONDetails/${TodoId}`)
             foundTodo = toLowerKeys(await resp.json())
-            getFormReady(id)
+            getFormReady(CourseId, TodoId)
         }
         catch (e) {
             alert(e.message)
         }
     }
 
-    function getFormReady(id) {
+    function getFormReady(CourseId, TodoId) {
         @*form.setAttribute("method", "PUT")  >>> method not allowed, left as POST*@
-        form.action = `/Course/${id}/UpdateTodo`
+        form.action = `/Course/${CourseId}/UpdateTodo/${TodoId}`
         document.getElementById("addSubmitBtn").textContent = "Update";
         //set method = put, btns value = update
 
