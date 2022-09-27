@@ -51,6 +51,12 @@ namespace MySchoolSystem.Controllers
                 return NotFound();
             }
 
+            await _context.Courses.Where(c => c.Id == enrollment.Course.Id)
+            .Include(p => p.Todos)
+            .Select( p => p.Todos)
+            .FirstOrDefaultAsync();
+
+
             return View(enrollment);
         }
 
@@ -179,7 +185,7 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
-
+            
             return View(enrollment);
         }
 

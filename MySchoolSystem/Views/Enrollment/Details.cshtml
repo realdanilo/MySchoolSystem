@@ -1,8 +1,7 @@
 @model MySchoolSystem.Models.Enrollment
 
-@{
-    ViewData["Title"] = "Details";
-}
+@{ ViewData["Title"] = "Details"; }
+
 
 <h1>Details</h1>
 
@@ -11,7 +10,7 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-3">
-           Student ID
+            Student ID
         </dt>
         <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Student.Id)
@@ -28,9 +27,7 @@
             @Html.DisplayNameFor(model => model.Course.Subject)
         </dt>
         <dd class="col-sm-9">
-            @{
-                String courseInstructorDisplay = Model.Course.Subject.SubjectName + " - " + Model.Course.Instructor.FirstName + " " + Model.Course.Instructor.LastName;
-            }
+            @{ String courseInstructorDisplay = Model.Course.Subject.SubjectName + " - " + Model.Course.Instructor.FirstName + " " + Model.Course.Instructor.LastName; }
 
             @Html.DisplayFor(model => courseInstructorDisplay)
 
@@ -81,4 +78,19 @@
     <hr />
 
     @*List all the course tasks*@
+    @if (Model.Course.Todos != null)
+    {
+        @foreach (var t in Model.Course.Todos)
+        {
+            <p>@t.Type</p>
+        }
+    }
+    else
+    {
+        <p>No tasks for this course</p>
+    }
+
 </div>
+
+    
+ 
