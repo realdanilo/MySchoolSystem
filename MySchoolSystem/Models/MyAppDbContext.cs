@@ -17,9 +17,11 @@ namespace MySchoolSystem.Models
         public DbSet<LetterGrade> LetterGrades { get; set; }
         public DbSet<Submitted_Assignments> Submitted_Assignments { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.EnableSensitiveDataLogging();
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<Todo>().HasData(
+            //    new Todo { }
+            //    );
+        }
     }
 }

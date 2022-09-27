@@ -10,46 +10,64 @@
     <h4>Enrollment</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-4">
-            @Html.DisplayNameFor(model => model.Year)
+        <dt class="col-sm-3">
+           Student ID
         </dt>
-        <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.Year)
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Student.Id)
         </dd>
-        <dt class="col-sm-4">
-            @Html.DisplayNameFor(model => model.Period)
-        </dt>
-        <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.Period.SeasonName)
-        </dd>
-        <dt class="col-sm-4">
+
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Student)
         </dt>
-        <dd class="col-sm-8">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Student.FirstName)  @Html.DisplayFor(model => model.Student.LastName)
         </dd>
-        <dt class="col-sm-4">
-            @Html.DisplayNameFor(model => model.Grade)
-        </dt>
-        <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.Grade.Grade)
-        </dd>
-        <dt class="col-sm-4">
+
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Course.Subject)
         </dt>
-        <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.Course.Instructor.FirstName) @Html.DisplayFor(model => model.Course.Instructor.LastName)
+        <dd class="col-sm-9">
+            @{
+                String courseInstructorDisplay = Model.Course.Subject.SubjectName + " - " + Model.Course.Instructor.FirstName + " " + Model.Course.Instructor.LastName;
+            }
+
+            @Html.DisplayFor(model => courseInstructorDisplay)
+
+            @*@Html.DisplayFor(model => model.Course.Instructor.FirstName) @Html.DisplayFor(model => model.Course.Instructor.LastName)*@
         </dd>
-        <dt class="col-sm-4">
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Period)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Period.SeasonName)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Grade)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Grade.Grade)
+        </dd>
+
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Dropped)
         </dt>
-        <dd class="col-sm-8">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Dropped)
         </dd>
-        <dt class="col-sm-4">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Notes)
         </dt>
-        <dd class="col-sm-8">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Notes)
         </dd>
     </dl>
@@ -57,4 +75,10 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+<div class="mt-4">
+    <h4>Course Tasks:</h4>
+    <hr />
+
+    @*List all the course tasks*@
 </div>

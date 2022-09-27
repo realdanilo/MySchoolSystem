@@ -12,9 +12,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
+            <th>Student ID</th>
             <th>
                 @Html.DisplayNameFor(model => model.Student)
             </th>
@@ -22,11 +20,14 @@
                 @Html.DisplayNameFor(model => model.Course)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dropped)
+                @Html.DisplayNameFor(model => model.Year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OpenForEnrollment)
+                @Html.DisplayNameFor(model => model.Dropped)
             </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.OpenForEnrollment)
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Notes)
             </th>
@@ -34,32 +35,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Student.FirstName)   @Html.DisplayFor(modelItem => item.Student.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.Subject.SubjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dropped)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OpenForEnrollment)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
-            </td>
-        </tr>
-}
+        @foreach (var item in Model) {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Student.Id)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Student.FirstName)   @Html.DisplayFor(modelItem => item.Student.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Course.Subject.SubjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Year)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dropped)
+                    </td>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.OpenForEnrollment)
+                    </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Notes)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Course Details</a> 
+                        @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                    </td>
+                </tr>
+        }
     </tbody>
 </table>

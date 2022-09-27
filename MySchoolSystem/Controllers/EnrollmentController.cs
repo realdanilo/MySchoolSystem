@@ -97,13 +97,30 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
-
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment == null)
             {
                 return NotFound();
             }
-            return View(enrollment);
+
+            List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
+            List<Student> students = await _context.Students.ToListAsync();
+            List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
+            List<Period> periods = await _context.Periods.ToListAsync();
+
+
+            EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel(courses, students, periods, grades);
+            enrollmentViewModel.Id = enrollment.Id;
+            enrollmentViewModel.CourseId = enrollment.Course.Id;
+            enrollmentViewModel.StudentId = enrollment.Student.Id;
+            enrollmentViewModel.PeriodId = enrollment.Period.Id;
+            enrollmentViewModel.Year = enrollment.Year;
+            enrollmentViewModel.GradeId = enrollment?.Grade?.Id;
+            enrollmentViewModel.Dropped = enrollment.Dropped;
+            enrollmentViewModel.Notes = enrollment.Notes;
+
+            return View(enrollmentViewModel);
+
         }
 
         // POST: Enrollment/Edit/5
@@ -117,28 +134,35 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
+            Enrollment updateEnrollment = await _context.Enrollments.FindAsync(id);
+            if (updateEnrollment == null)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(enrollmentVM);
+                    //Enrollment newEnrollment = new Enrollment();
+                    updateEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
+                    updateEnrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentVM.StudentId);
+                    updateEnrollment.Period = await _context.Periods.FirstAsync(i => i.Id == enrollmentVM.PeriodId);
+                    updateEnrollment.Grade = enrollmentVM.GradeId == null ? null :  await _context.LetterGrades.FirstAsync(i => i.Id == enrollmentVM.GradeId);
+                    updateEnrollment.Year = enrollmentVM.Year;
+                    updateEnrollment.Dropped = enrollmentVM.Dropped;
+                    //updateEnrollment.OpenForEnrollment = enrollmentVM.OpenForEnrollment; >> i  think this should not be available
+                    updateEnrollment.Notes = enrollmentVM.Notes;
+                    _context.Update(updateEnrollment);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
-                    //if (!EnrollmentExists(enrollmentVM.Id))
-                    //{
-                    //    return NotFound();
-                    //}
-                    //else
-                    //{
-                    //    throw;
-                    //}
+                    return NotFound(e.Message);
+
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(enrollmentVM);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Enrollment/Delete/5
