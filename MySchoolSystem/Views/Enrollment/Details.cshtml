@@ -77,20 +77,106 @@
     <h4>Course Tasks:</h4>
     <hr />
 
+
+
+
     @*List all the course tasks*@
     @if (Model.Course.Todos != null)
     {
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Rubric
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Points
+            </th>
+            <th>
+                Score
+            </th>
+            <th>
+                Expire
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
         @foreach (var t in Model.Course.Todos)
         {
-            <p>@t.Type</p>
-        }
-    }
-    else
-    {
-        <p>No tasks for this course</p>
-    }
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => t.Type)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => t.Rubric)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => t.FileLocation)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => t.Points)
+    </td>
+    <td>
+        Score...WIP
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => t.ExpirationDate)
+    </td>
+    <td>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+            Submit
+        </button>
+    </td>
+
+</tr>}
+
+    </tbody>
+</table> }
+
+
+            else
+            {
+<p>No tasks for this course</p>}
+
+
 
 </div>
 
-    
- 
+
+
+@*Modal*@
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<form>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @*main*@
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01">
+                            <label class="custom-file-label" for="inputGroupFile01">Click to choose file</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-success">Submit</button>
+                </div>
+            </div>
+        </div>
+</form>
+    </div>
