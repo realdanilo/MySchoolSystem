@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +17,14 @@ namespace MySchoolSystem.Controllers
     public class EnrollmentController : Controller
     {
         private readonly MyAppDbContext _context;
+        private readonly IWebHostEnvironment _hostingEnv;
+
         public EnrollmentViewModel enrollmentVM { get; set; }
 
-        public EnrollmentController(MyAppDbContext context)
+        public EnrollmentController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnv = hostingEnvironment;
         }
 
         // GET: Enrollment
@@ -203,6 +209,23 @@ namespace MySchoolSystem.Controllers
         private bool EnrollmentExists(int id)
         {
             return _context.Enrollments.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitFile([FromForm]IFormFile FileUpload, [FromForm]int CourseId, [FromForm]int EnrollmentId, [FromForm]int TodoId)
+        {
+            var checkTxt = FileUpload.FileName.Substring(FileUpload.FileName.Length - 3);
+            if(FileUpload != null && checkTxt == "txt")
+            {
+                string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public");
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileUpload.FileName;
+
+                string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
+                await FileUpload.CopyToAsync(new FileStream(filePath,FileMode.Create));
+                Console.WriteLine(FileUpload.FileName);
+            }
+
+            return RedirectToAction("Details", new { id = EnrollmentId });
         }
     }
 }

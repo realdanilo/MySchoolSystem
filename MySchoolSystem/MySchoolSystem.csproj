@@ -25,5 +25,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
+    <Folder Include="wwwroot\public\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\public\" />
   </ItemGroup>
 </Project>

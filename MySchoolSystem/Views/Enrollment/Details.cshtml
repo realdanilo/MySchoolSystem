@@ -130,7 +130,7 @@
         @Html.DisplayFor(modelItem => t.ExpirationDate)
     </td>
     <td>
-        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+        <button onclick="setTodoId(@t.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
             Submit
         </button>
     </td>
@@ -153,7 +153,7 @@
 
 @*Modal*@
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<form>
+<form method="post" enctype="multipart/form-data" asp-controller="Enrollment" asp-action="SubmitFile">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -163,20 +163,34 @@
                     </button>
                 </div>
                 @*main*@
-                <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01">
-                            <label class="custom-file-label" for="inputGroupFile01">Click to choose file</label>
-                        </div>
-                    </div>
+            <div class="modal-body">
+                <input hidden name="CourseId" value=@Model.Course.Id />
+                <input hidden name="TodoId" value="" id="TodoIdInput" />
+                <input hidden name="EnrollmentId" value=@Model.Id />
 
+
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input name="FileUpload" type="file" accept=".txt" class="custom-file-input" id="inputGroupFile01">
+                        <label class="custom-file-label" for="inputGroupFile01">Click to choose file</label>
+                    </div>
                 </div>
+
+            </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-outline-success">Submit</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
                 </div>
             </div>
         </div>
 </form>
     </div>
+
+
+<script>
+    function setTodoId(TodoId) {
+        let inputField = document.getElementById("TodoIdInput")
+        inputField.value = TodoId
+    }
+
+</script>

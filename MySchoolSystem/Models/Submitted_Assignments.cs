@@ -13,6 +13,9 @@ namespace MySchoolSystem.Models
 
         //submit to specific enrollment 
         public Enrollment Enrollment { get; set; }
+        //uploaded file
+        public string FileLocation { get; set; }
+
 
     }
 }
