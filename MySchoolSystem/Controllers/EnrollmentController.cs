@@ -221,8 +221,20 @@ namespace MySchoolSystem.Controllers
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileUpload.FileName;
 
                 string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
-                await FileUpload.CopyToAsync(new FileStream(filePath,FileMode.Create));
-                Console.WriteLine(FileUpload.FileName);
+                //saving to server
+                //Works
+                using(var fStream = new FileStream(filePath, FileMode.Create))
+                {
+                    fStream.Position = 0;
+                    await FileUpload.CopyToAsync(fStream);
+                    await fStream.FlushAsync();
+                }
+                //DOESNT WORK >>> await FileUpload.CopyToAsync(new FileStream(filePath, FileMode.Create));
+                //reading file
+                using(var reader = new StreamReader(FileUpload.OpenReadStream()))
+                {
+                    Console.WriteLine(await reader.ReadToEndAsync());
+                }
             }
 
             return RedirectToAction("Details", new { id = EnrollmentId });
