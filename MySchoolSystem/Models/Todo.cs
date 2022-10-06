@@ -14,9 +14,9 @@ namespace MySchoolSystem.Models
         //rubric, file from instructor
         public string Rubric { get; set; }
 
-        //uploaded file from student
-        [Required]
-        public string FileLocation { get; set; } 
+        //uploaded file from student >> MOVED TO SUBMITTED_ASSIGMENTS
+        //[Required]
+        //public string FileLocation { get; set; } 
 
         //check
         [Required]

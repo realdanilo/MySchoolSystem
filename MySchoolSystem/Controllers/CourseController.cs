@@ -226,7 +226,7 @@ namespace MySchoolSystem.Controllers
         //POST: Course/{CourseId}/Todo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTodo(int CourseId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        public async Task<IActionResult> AddTodo(int CourseId, [Bind("Id,Type,Rubric,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
             if (ModelState.IsValid && CourseId == course_todoVM.Id)
             {
@@ -239,7 +239,6 @@ namespace MySchoolSystem.Controllers
                     newTodo.Type = course_todoVM.Type;
                     newTodo.Rubric = course_todoVM.Rubric;
                     newTodo.Points = course_todoVM.Points;
-                    newTodo.FileLocation = course_todoVM.FileLocation;
                     newTodo.ExpirationDate = course_todoVM.ExpirationDate;
 
                     _context.Add(newTodo);
@@ -263,7 +262,7 @@ namespace MySchoolSystem.Controllers
         //POST: Course/{CourseId}/UpdateTodo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTodo(int CourseId, int TodoId, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        public async Task<IActionResult> UpdateTodo(int CourseId, int TodoId, [Bind("Id,Type,Rubric,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
             if (ModelState.IsValid)
             {
@@ -277,7 +276,6 @@ namespace MySchoolSystem.Controllers
                     t.Type = course_todoVM.Type;
                     t.Rubric = course_todoVM.Rubric;
                     t.Points = course_todoVM.Points;
-                    t.FileLocation = course_todoVM.FileLocation;
                     t.ExpirationDate = course_todoVM.ExpirationDate;
 
                     await _context.SaveChangesAsync();

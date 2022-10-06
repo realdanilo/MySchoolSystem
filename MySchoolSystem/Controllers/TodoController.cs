@@ -70,7 +70,7 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Todo task)
+        public async Task<IActionResult> Create([Bind("Id,Type,Rubric,Points,ExpirationDate")] Todo task)
         {
             if (ModelState.IsValid)
             {
@@ -102,7 +102,7 @@ namespace MySchoolSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Rubric,FileLocation,Points,ExpirationDate")] Todo task)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Rubric,Points,ExpirationDate")] Todo task)
         {
             if (id != task.Id)
             {

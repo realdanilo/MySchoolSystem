@@ -51,16 +51,30 @@ namespace MySchoolSystem.Controllers
                 .Include(p => p.Period)
                 .Include(p => p.Grade)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            //can include/add later on tasks submitted
             if (enrollment == null)
             {
                 return NotFound();
             }
 
+            //generating the TODOS for that enrollment. Can I make a static method to generate it? check..
             await _context.Courses.Where(c => c.Id == enrollment.Course.Id)
             .Include(p => p.Todos)
             .Select( p => p.Todos)
             .FirstOrDefaultAsync();
+
+            //tasks submitted, EF core issue while using .Include on populating
+            //await _context.Enrollments
+            //    .Where(e)
+            //    .Include(p => p.Submitted_Assignments)
+            //    .ToListAsync();
+            //var mm = _context.Submitted_Assignments
+            //    .Where(subs => subs.Enrollment.Id == enrollment.Id);
+
+             
+            //foreach (var item in mm)
+            //{
+            //    Console.WriteLine(item.Id);
+            //}
 
 
             return View(enrollment);
@@ -235,6 +249,19 @@ namespace MySchoolSystem.Controllers
                 {
                     Console.WriteLine(await reader.ReadToEndAsync());
                 }
+
+                //creating new submitted_assignment
+                Enrollment currentEnrollement = await _context.Enrollments.FirstOrDefaultAsync(e => e.Id == EnrollmentId);
+
+                Submitted_Assignments newSubmittedAssignment = new Submitted_Assignments();
+                newSubmittedAssignment.Task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == TodoId);
+                newSubmittedAssignment.Enrollment = currentEnrollement;
+                //newSubmittedAssignment.FileLocation = filePath;
+                _context.Add(newSubmittedAssignment);
+
+                //saving to the specific enrollment-relation
+                currentEnrollement.Submitted_Assignments.Add(newSubmittedAssignment);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("Details", new { id = EnrollmentId });

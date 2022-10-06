@@ -8,14 +8,15 @@ namespace MySchoolSystem.Models
         [Key]
         public int Id { get; set; }
 
+        //uploaded file
+        [Required]
+        public string FileLocation { get; set; }
+
         //submit a task
         public Todo Task { get; set; }
 
         //submit to specific enrollment 
         public Enrollment Enrollment { get; set; }
-        //uploaded file
-        public string FileLocation { get; set; }
-
-
+        
     }
 }
