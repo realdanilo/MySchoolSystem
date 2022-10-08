@@ -50,6 +50,7 @@ namespace MySchoolSystem.Controllers
                 .Include(p => p.Course.Instructor)
                 .Include(p => p.Period)
                 .Include(p => p.Grade)
+                .Include(p => p.Submitted_Assignments)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (enrollment == null)
             {
@@ -62,19 +63,18 @@ namespace MySchoolSystem.Controllers
             .Select( p => p.Todos)
             .FirstOrDefaultAsync();
 
-            //tasks submitted, EF core issue while using .Include on populating
-            //await _context.Enrollments
-            //    .Where(e)
-            //    .Include(p => p.Submitted_Assignments)
-            //    .ToListAsync();
-            //var mm = _context.Submitted_Assignments
-            //    .Where(subs => subs.Enrollment.Id == enrollment.Id);
+            //cleaning Submittes_Assignments File Path for front end
+            if(enrollment.Submitted_Assignments.Count > 0)
+            {
+                string rootKeyword = "wwwroot";
+                int index = 0;
 
-             
-            //foreach (var item in mm)
-            //{
-            //    Console.WriteLine(item.Id);
-            //}
+                foreach (var assignment in enrollment.Submitted_Assignments)
+                {
+                    index = assignment.FileLocation.IndexOf(rootKeyword) + 7;
+                    assignment.FileLocation = assignment.FileLocation.Substring(index);
+                }
+            }
 
 
             return View(enrollment);
@@ -231,13 +231,13 @@ namespace MySchoolSystem.Controllers
             var checkTxt = FileUpload.FileName.Substring(FileUpload.FileName.Length - 3);
             if(FileUpload != null && checkTxt == "txt")
             {
+
                 string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public");
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileUpload.FileName;
 
                 string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
                 //saving to server
-                //Works
-                using(var fStream = new FileStream(filePath, FileMode.Create))
+                using (var fStream = new FileStream(filePath, FileMode.Create))
                 {
                     fStream.Position = 0;
                     await FileUpload.CopyToAsync(fStream);
@@ -251,16 +251,35 @@ namespace MySchoolSystem.Controllers
                 }
 
                 //creating new submitted_assignment
+                //check if theres already a submitted file
                 Enrollment currentEnrollement = await _context.Enrollments.FirstOrDefaultAsync(e => e.Id == EnrollmentId);
 
-                Submitted_Assignments newSubmittedAssignment = new Submitted_Assignments();
-                newSubmittedAssignment.Task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == TodoId);
-                newSubmittedAssignment.Enrollment = currentEnrollement;
-                //newSubmittedAssignment.FileLocation = filePath;
-                _context.Add(newSubmittedAssignment);
+                var submittedTodo = await _context.Submitted_Assignments
+                    .Include(p => p.Enrollment)
+                    .Where(assignment => assignment.Enrollment.Id == currentEnrollement.Id)
+                    .FirstOrDefaultAsync();
+                    
 
-                //saving to the specific enrollment-relation
-                currentEnrollement.Submitted_Assignments.Add(newSubmittedAssignment);
+                if (submittedTodo != null)
+                {
+                    //delete old file
+                    System.IO.File.Delete(submittedTodo.FileLocation);
+
+                    //update new file
+                    submittedTodo.FileLocation = filePath;
+                }
+                else
+                {
+                    Submitted_Assignments newSubmittedAssignment = new Submitted_Assignments();
+                    newSubmittedAssignment.Task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == TodoId);
+                    newSubmittedAssignment.Enrollment = currentEnrollement;
+                    newSubmittedAssignment.FileLocation = filePath;
+                    _context.Add(newSubmittedAssignment);
+
+                    //saving to the specific enrollment-relation
+                    currentEnrollement.Submitted_Assignments.Add(newSubmittedAssignment);
+                }
+
                 await _context.SaveChangesAsync();
             }
 

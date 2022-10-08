@@ -1,6 +1,8 @@
 @model MySchoolSystem.Models.Enrollment
 
-@{ ViewData["Title"] = "Details"; }
+@{ ViewData["Title"] = "Details";
+    var assignmentsFromServer = Model.Submitted_Assignments;
+    }
 
 
 <h1>Details</h1>
@@ -78,8 +80,6 @@
     <hr />
 
 
-
-
     @*List all the course tasks*@
     @if (Model.Course.Todos != null)
     {
@@ -105,26 +105,35 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var t in Model.Course.Todos)
+        @foreach (var task in Model.Course.Todos)
         {
 <tr>
     <td>
-        @Html.DisplayFor(modelItem => t.Type)
+        @Html.DisplayFor(modelItem => task.Type)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => t.Rubric)
+        @Html.DisplayFor(modelItem => task.Rubric)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => t.Points)
+        @Html.DisplayFor(modelItem => task.Points)
     </td>
     <td>
         Score...WIP
     </td>
     <td>
-        @Html.DisplayFor(modelItem => t.ExpirationDate)
+        @Html.DisplayFor(modelItem => task.ExpirationDate)
     </td>
     <td>
-        <button onclick="setTodoId(@t.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+        @foreach (var assignment in assignmentsFromServer)
+        {
+            if (assignment.Task.Id == task.Id)
+            {
+                {
+                    <a target="_blank" href="@assignment.FileLocation">Check</a>
+                }
+            }
+        }
+        <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
             Submit
         </button>
     </td>
@@ -170,6 +179,11 @@
                     </div>
                 </div>
 
+                @*select submitted task*@
+                <div id="submittedTaskFromServer">
+                   
+                </div>
+
             </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -185,6 +199,7 @@
     function setTodoId(TodoId) {
         let inputField = document.getElementById("TodoIdInput")
         inputField.value = TodoId
+       
     }
 
 </script>
