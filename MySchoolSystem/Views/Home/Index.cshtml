@@ -2,38 +2,101 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h3 class="display-4">School ERP System</h3>
-</div>
-</hr>
+
 
 <div class="container">
 
     <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
-                </div>
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <div class="card mb-3">
+                <a class="card-link text-dark" asp-controller="Course" asp-action="Index">
+                    <div class="card-body">
+                        <h5 class="card-title">Search Courses</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Quick Select</h6>
+                        <p class="card-text">Find all courses available in the system</p>
+                    </div>
+                 </a>
             </div>
         </div>
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
-                </div>
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <div class="card mb-3">
+                <a class="card-link text-dark" asp-controller="Student" asp-action="Index">
+                    <div class="card-body">
+                        <h5 class="card-title">Students</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Quick Select</h6>
+                        <p class="card-text">Get students information and enrollment</p>
+                        
+                    </div>
+                 </a>
             </div>
         </div>
-        <div class="col">
-            3 of 3
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <div class="card mb-3">
+                <a class="card-link text-dark" asp-controller="Instructor" asp-action="Index">
+                    <div class="card-body">
+                        <h5 class="card-title">Professors</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Quick Select</h6>
+                        <p class="card-text">Professor's current classes, availability, and tasks</p>
+                    </div>
+                </a>
+            </div>
         </div>
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <div class="card mb-3">
+                <a class="card-link text-dark" asp-controller="Period" asp-action="Index">
+                    <div class="card-body">
+                        <h5 class="card-title">Check semesters</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Add or fix school's teaching period. </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+@*Alerts*@
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <p class="h3 mb-3">Alerts:</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Create Calculus III</li>
+                <li class="list-group-item">Monitor Enrollments</li>
+                <li class="list-group-item">Set Fild Trip Seasonal-Class Credit</li>
+                <li class="list-group-item">Generate Excel Report for student</li>
+                <li class="list-group-item">Deploy to production</li>
+            </ul>
+        </div>
+        <div class="col-12 col-lg-6">
+            <img src="https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png"
+                 class="img-fluid" alt="Amazon Web Services (AWS) logo">
+        </div>
+    </div>
+
+    @*Info*@
+    <div class="row my-3">
+        <div class="col-12 col-lg-6">
+            <h4>Purpose:</h4>
+            <p>
+                Practice and learn about EF and Idendity, as well as C# ecosystem.
+                Once the application is ready, I will manage the service online using AWS.
+            </p>
+            <p>
+                My goal is to build an applcation similar to SAP ERP, where you can mass import/export, and generate reports, CRUD items.
+            </p>
+        </div>
+        <div class="col-12 col-lg-6">
+            <ul class="list-style">
+                <li>Finish ERP controllers and major CRUD (with cascade) functionality</li>
+                <li>Create export excel report files</li>
+                <li>Set Identities: Admins, Teacher, Students.. to limit functionality</li>
+                <li>Mass import change files from excel</li>
+                <li>Host application using AWS.</li>
+                <ul>
+                    <li>Beanstalk or single available instance with AWS RDS</li>
+                    <li>Write lamba function to generate export files report. Custom code</li>
+                </ul>
+            </ul>
+        </div>
+
     </div>
 </div>

@@ -31,7 +31,7 @@ namespace MySchoolSystem.Models.ViewModels
         }
         public CourseViewModel(List<Instructor> instructors, List<Subject> subjects)
         {
-            Instructors = new List<SelectListItem>();
+            Instructors = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach(Instructor i in instructors)
             {
                 Instructors.Add(
@@ -43,7 +43,7 @@ namespace MySchoolSystem.Models.ViewModels
                     );
             }
 
-            Subjects = new List<SelectListItem>();
+            Subjects = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach (Subject i in subjects)
             {
                 Subjects.Add(
