@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace MySchoolSystem.Models.ViewModels
 {
@@ -17,10 +18,11 @@ namespace MySchoolSystem.Models.ViewModels
         public string Type { get; set; }
 
         //rubric dir
-        [Required]
-        public string Rubric { get; set; }
+        //[Required]
+        //[FileExtensions(Extensions ="txt", ErrorMessage = ".txt extension only")]
+        public IFormFile Rubric { get; set; }
 
-        public string FileLocation { get; set; } = "/";
+        //public string FileLocation { get; set; } = "/";
 
         [Required]
         [Range(0, 100)]

@@ -56,7 +56,7 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="post" class="modal-content" asp-controller="Course" asp-route-CourseId=@Model.Id asp-action="AddTodo">
+        <form method="post" enctype="multipart/form-data" class="modal-content" asp-controller="Course" asp-route-CourseId=@Model.Id asp-action="AddTodo">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Creating assingment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -70,16 +70,24 @@
                     <input asp-for="Type" class="form-control" />
                     <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     <label asp-for="Rubric" class="control-label"></label>
                     <input asp-for="Rubric" class="form-control" />
                     <span asp-validation-for="Rubric" class="text-danger"></span>
-                </div>
+                </div>*@
                 <div class="form-group">
-                    <label asp-for="FileLocation" class="control-label"></label>
-                    <input asp-for="FileLocation" class="form-control" />
-                    <span asp-validation-for="FileLocation" class="text-danger"></span>
+                    <div>
+                        <label asp-for="Rubric" class="control-label"></label>
+                        <div class="custom-file">
+                            <label asp-for="Rubric" class="custom-file-label">Rubric</label>
+                            @*<label class="custom-file-label" asp-for="Rubric">Click to choose file</label>*@
+                            <input name="Rubric" type="file" accept=".txt" class="custom-file-input" asp-for="Rubric">
+                        </div>
+                        <span asp-validation-for="Rubric" class="text-danger"></span>
+                    </div>
+
                 </div>
+
                 <div class="form-group">
                     <label asp-for="Points" class="control-label"></label>
                     <input asp-for="Points" class="form-control" />
@@ -131,11 +139,17 @@
 
         let data = new FormData(form);
         for (let [key, value] of data) {
+            //console.log(key) testing rubric
+
             if (document.getElementById(`${key}`)) {
                 //if date, format
                 if (key == "ExpirationDate") {
                     document.getElementById(`${key}`).value = new Date(foundTodo[key.toLocaleLowerCase()]).toISOString().slice(0, 10)
-                } else {
+                } else if(key == "Rubric"){
+                    //console.log("yield rubric")
+                    continue
+                }
+                else {
                     document.getElementById(`${key}`).value = foundTodo[key.toLocaleLowerCase()]
                 }
             }   

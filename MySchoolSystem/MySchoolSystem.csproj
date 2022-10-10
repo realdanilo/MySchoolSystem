@@ -26,8 +26,10 @@
   <ItemGroup>
     <Folder Include="Models\ViewModels\" />
     <Folder Include="wwwroot\public\" />
+    <Folder Include="wwwroot\public\rubrics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\public\" />
+    <Content Remove="wwwroot\public\rubrics\" />
   </ItemGroup>
 </Project>

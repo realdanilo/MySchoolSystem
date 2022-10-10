@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +18,12 @@ namespace MySchoolSystem.Controllers
     {
         public CourseViewModel courseVM { get; set; }
         private readonly MyAppDbContext _context;
+        private readonly IWebHostEnvironment _hostingEnv;
 
-        public CourseController(MyAppDbContext context)
+        public CourseController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnv = hostingEnvironment;
         }
 
         // GET: Course
@@ -226,8 +231,9 @@ namespace MySchoolSystem.Controllers
         //POST: Course/{CourseId}/Todo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTodo(int CourseId, [Bind("Id,Type,Rubric,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        public async Task<IActionResult> AddTodo([FromForm] IFormFile Rubric, int CourseId, [Bind("Id,Type,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
+            course_todoVM.Rubric = Rubric;
             if (ModelState.IsValid && CourseId == course_todoVM.Id)
             {
                 try
@@ -237,9 +243,21 @@ namespace MySchoolSystem.Controllers
 
                     Todo newTodo = new Todo();
                     newTodo.Type = course_todoVM.Type;
-                    newTodo.Rubric = course_todoVM.Rubric;
                     newTodo.Points = course_todoVM.Points;
                     newTodo.ExpirationDate = course_todoVM.ExpirationDate;
+                    //rubric uploading / path
+                    string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public","rubrics");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + course_todoVM.Rubric.FileName;
+
+                    string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
+                    //saving to server
+                    using (var fStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        fStream.Position = 0;
+                        await course_todoVM.Rubric.CopyToAsync(fStream);
+                        await fStream.FlushAsync();
+                    }
+                    newTodo.Rubric = filePath;
 
                     _context.Add(newTodo);
                     course.Todos.Add(newTodo);
@@ -262,8 +280,9 @@ namespace MySchoolSystem.Controllers
         //POST: Course/{CourseId}/UpdateTodo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTodo(int CourseId, int TodoId, [Bind("Id,Type,Rubric,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
+        public async Task<IActionResult> UpdateTodo([FromForm] IFormFile Rubric, int CourseId, int TodoId, [Bind("Id,Type,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
+            course_todoVM.Rubric = Rubric;
             if (ModelState.IsValid)
             {
                 if (!CourseExists(CourseId) && !TodoExists(CourseId)) return NotFound();
@@ -274,9 +293,27 @@ namespace MySchoolSystem.Controllers
 
                     Todo t = course.Todos.Where(t => t.Id == TodoId).Select(t => t).Single();
                     t.Type = course_todoVM.Type;
-                    t.Rubric = course_todoVM.Rubric;
                     t.Points = course_todoVM.Points;
                     t.ExpirationDate = course_todoVM.ExpirationDate;
+
+                    //rubric uploading / path
+                    string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public", "rubrics");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + course_todoVM.Rubric.FileName;
+
+                    string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
+                    //saving to server
+                    using (var fStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        fStream.Position = 0;
+                        await course_todoVM.Rubric.CopyToAsync(fStream);
+                        await fStream.FlushAsync();
+                    }
+
+                    //delete old file
+                    System.IO.File.Delete(t.Rubric);
+
+                    //update new file
+                    t.Rubric = filePath;
 
                     await _context.SaveChangesAsync();
                 }

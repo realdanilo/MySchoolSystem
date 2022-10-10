@@ -1,8 +1,7 @@
 @model MySchoolSystem.Models.Enrollment
 
 @{ ViewData["Title"] = "Details";
-    var assignmentsFromServer = Model.Submitted_Assignments;
-    }
+    var assignmentsFromServer = Model.Submitted_Assignments; }
 
 
 <div class="container">
@@ -136,25 +135,25 @@
             if (assignment.Task.Id == task.Id)
             {
                 {
-                    <a target="_blank" href="@assignment.FileLocation">Check</a>
-                }
-            }
-        }
+<a target="_blank" href="@assignment.FileLocation">Check</a>}
+                        }
+                    }
         <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
             Submit
         </button>
     </td>
 
-</tr>}
+</tr>
+}
 
     </tbody>
 </table> }
 
 
-            else
-            {
-        <hr/>
-<p>No tasks for this course</p>}
+else
+{
+<hr />
+                <p>No tasks for this course</p>}
 
 
 
@@ -163,51 +162,46 @@
 
 
 @*Modal*@
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<form method="post" enctype="multipart/form-data" asp-controller="Enrollment" asp-action="SubmitFile">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form method="post" enctype="multipart/form-data" asp-controller="Enrollment" asp-action="SubmitFile">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Select File</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 @*main*@
-            <div class="modal-body">
-                <input hidden name="CourseId" value=@Model.Course.Id />
-                <input hidden name="TodoId" value="" id="TodoIdInput" />
-                <input hidden name="EnrollmentId" value=@Model.Id />
+                <div class="modal-body">
+                    <input hidden name="CourseId" value=@Model.Course.Id />
+                    <input hidden name="TodoId" value="" id="TodoIdInput" />
+                    <input hidden name="EnrollmentId" value=@Model.Id />
 
 
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input name="FileUpload" type="file" accept=".txt" class="custom-file-input" id="inputGroupFile01">
-                        <label class="custom-file-label" for="inputGroupFile01">Click to choose file</label>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <label class="custom-file-label" for="inputFileToUpload">Click to choose file</label>
+                            <input name="FileUpload" type="file" accept=".txt"
+                                   class="custom-file-input" id="inputFileToUpload">
+                        </div>
                     </div>
-                </div>
 
-                @*select submitted task*@
-                <div id="submittedTaskFromServer">
-                   
                 </div>
-
-            </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-outline-success">Submit</button>
                 </div>
+
             </div>
         </div>
-</form>
-    </div>
+    </form>
+</div>
 
 
-<script>
-    function setTodoId(TodoId) {
+<script>function setTodoId(TodoId) {
         let inputField = document.getElementById("TodoIdInput")
         inputField.value = TodoId
-       
-    }
 
-</script>
+    }</script>
+
