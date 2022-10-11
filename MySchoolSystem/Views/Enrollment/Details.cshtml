@@ -118,7 +118,8 @@
         @Html.DisplayFor(modelItem => task.Type)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => task.Rubric)
+        @*@Html.DisplayFor(modelItem => task.Rubric)*@
+        <a href="@task.Rubric" target="_blank">Rubric</a>
     </td>
     <td>
         @Html.DisplayFor(modelItem => task.Points)
@@ -127,7 +128,9 @@
         Score...WIP
     </td>
     <td>
-        @Html.DisplayFor(modelItem => task.ExpirationDate)
+        @*@Html.DisplayFor(modelItem => task.ExpirationDate)*@
+        @{ var fixedTime = task.ExpirationDate.ToString("MM/dd/yyyy");}
+        @Html.DisplayFor(modelItem => fixedTime)
     </td>
     <td>
         @foreach (var assignment in assignmentsFromServer)
@@ -135,7 +138,7 @@
             if (assignment.Task.Id == task.Id)
             {
                 {
-<a target="_blank" href="@assignment.FileLocation">Check</a>}
+                <a class="btn btn-outline-secondary" target="_blank" href="@assignment.FileLocation">Check</a>}
                         }
                     }
         <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">

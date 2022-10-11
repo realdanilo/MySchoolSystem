@@ -35,7 +35,7 @@
                 @*<td>@t.ExpirationDate.ToString("MM/dd/yyyy")</td>*@
                 <td>@t.ExpirationDate</td>
                 <td>@t.Type</td>
-                <td>@t.Rubric</td>
+                <td><a href="@t.Rubric" target="_blank">Rubric</a></td>
                 <td>@t.Points</td>
                 <td>
                     <button onclick="getTodoReady(@Model.Id, @t.Id)"

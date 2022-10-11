@@ -225,6 +225,17 @@ namespace MySchoolSystem.Controllers
             courseTodoVM.Id = CourseId;
             courseTodoVM.Subject = course.Subject.SubjectName.ToString();
 
+            if(course.Todos.Count > 0)
+            {
+                string rootKeyword = "wwwroot";
+                int index = 0;
+                foreach (var todo in course.Todos)
+                {
+                    index = todo.Rubric.IndexOf(rootKeyword) + 7;
+                    todo.Rubric = todo.Rubric.Substring(index);
+                }
+            }
+
             return View(courseTodoVM);
         }
 
@@ -309,8 +320,11 @@ namespace MySchoolSystem.Controllers
                         await fStream.FlushAsync();
                     }
 
-                    //delete old file
-                    System.IO.File.Delete(t.Rubric);
+                    //delete old file4
+                    if (System.IO.File.Exists(t.Rubric))
+                    {
+                        System.IO.File.Delete(t.Rubric);
+                    }
 
                     //update new file
                     t.Rubric = filePath;

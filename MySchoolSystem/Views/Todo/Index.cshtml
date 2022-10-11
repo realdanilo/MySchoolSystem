@@ -34,7 +34,8 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Rubric)
+                @{ var cleanRubric = item.Rubric.Substring(item.Rubric.IndexOf("wwwroot") + 7); }
+                @Html.DisplayFor(modelItem => cleanRubric)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Points)
