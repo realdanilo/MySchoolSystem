@@ -228,9 +228,10 @@ namespace MySchoolSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitFile([FromForm]IFormFile FileUpload, [FromForm]int CourseId, [FromForm]int EnrollmentId, [FromForm]int TodoId)
         {
-            var checkTxt = FileUpload.FileName.Substring(FileUpload.FileName.Length - 3);
-            if(FileUpload != null && checkTxt == "txt")
+            if(FileUpload != null)
             {
+                var checkTxt = FileUpload.FileName.Substring(FileUpload.FileName.Length - 3);
+                if (checkTxt != "txt") return NotFound();
 
                 string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public");
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileUpload.FileName;

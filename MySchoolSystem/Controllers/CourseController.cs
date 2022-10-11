@@ -245,7 +245,7 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> AddTodo([FromForm] IFormFile Rubric, int CourseId, [Bind("Id,Type,Points,ExpirationDate")] Course_TodoViewModel course_todoVM)
         {
             course_todoVM.Rubric = Rubric;
-            if (ModelState.IsValid && CourseId == course_todoVM.Id)
+            if (ModelState.IsValid && CourseId == course_todoVM.Id && Rubric != null)
             {
                 try
                 {
@@ -307,27 +307,30 @@ namespace MySchoolSystem.Controllers
                     t.Points = course_todoVM.Points;
                     t.ExpirationDate = course_todoVM.ExpirationDate;
 
-                    //rubric uploading / path
-                    string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public", "rubrics");
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + course_todoVM.Rubric.FileName;
-
-                    string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
-                    //saving to server
-                    using (var fStream = new FileStream(filePath, FileMode.Create))
+                    if(Rubric != null)
                     {
-                        fStream.Position = 0;
-                        await course_todoVM.Rubric.CopyToAsync(fStream);
-                        await fStream.FlushAsync();
-                    }
+                        //rubric uploading / path
+                        string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public", "rubrics");
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + course_todoVM.Rubric.FileName;
 
-                    //delete old file4
-                    if (System.IO.File.Exists(t.Rubric))
-                    {
-                        System.IO.File.Delete(t.Rubric);
-                    }
+                        string filePath = Path.Combine(uploadFolderPath, uniqueFileName);
+                        //saving to server
+                        using (var fStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            fStream.Position = 0;
+                            await course_todoVM.Rubric.CopyToAsync(fStream);
+                            await fStream.FlushAsync();
+                        }
 
-                    //update new file
-                    t.Rubric = filePath;
+                        //delete old file4
+                        if (System.IO.File.Exists(t.Rubric))
+                        {
+                            System.IO.File.Delete(t.Rubric);
+                        }
+
+                        //update new file
+                        t.Rubric = filePath;
+                    }
 
                     await _context.SaveChangesAsync();
                 }

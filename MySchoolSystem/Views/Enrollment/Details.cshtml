@@ -113,41 +113,44 @@
     <tbody>
         @foreach (var task in Model.Course.Todos)
         {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => task.Type)
-    </td>
-    <td>
-        @*@Html.DisplayFor(modelItem => task.Rubric)*@
-        <a href="@task.Rubric" target="_blank">Rubric</a>
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => task.Points)
-    </td>
-    <td>
-        Score...WIP
-    </td>
-    <td>
-        @*@Html.DisplayFor(modelItem => task.ExpirationDate)*@
-        @{ var fixedTime = task.ExpirationDate.ToString("MM/dd/yyyy");}
-        @Html.DisplayFor(modelItem => fixedTime)
-    </td>
-    <td>
-        @foreach (var assignment in assignmentsFromServer)
-        {
-            if (assignment.Task.Id == task.Id)
-            {
-                {
-                <a class="btn btn-outline-secondary" target="_blank" href="@assignment.FileLocation">Check</a>}
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => task.Type)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => task.Rubric)*@
+                    <a href="@task.Rubric" target="_blank">Rubric</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => task.Points)
+                </td>
+                <td>
+                    Score...WIP
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => task.ExpirationDate)*@
+                    @{ var fixedTime = task.ExpirationDate.ToString("MM/dd/yyyy");}
+                    @Html.DisplayFor(modelItem => fixedTime)
+                </td>
+                <td>
+                    @foreach (var assignment in assignmentsFromServer)
+                    {
+                        if (assignment.Task.Id == task.Id)
+                        {
+                        <a class="btn btn-outline-secondary" target="_blank" href="@assignment.FileLocation">Check</a>
                         }
+                     }
+                    @if (!(task.ExpirationDate <= DateTime.Now))
+                    {
+                        <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+                            Submit
+                        </button>
                     }
-        <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
-            Submit
-        </button>
-    </td>
+                   
+                </td>
 
-</tr>
-}
+            </tr>
+          }
 
     </tbody>
 </table> }
