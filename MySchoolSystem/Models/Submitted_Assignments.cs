@@ -12,6 +12,9 @@ namespace MySchoolSystem.Models
         [Required]
         public string FileLocation { get; set; }
 
+        //Graded Assignment points
+        public int GradedPoints { get; set; } = -1;
+
         //submit a task
         public Todo Task { get; set; }
 
