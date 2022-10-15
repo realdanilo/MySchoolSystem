@@ -257,9 +257,14 @@ namespace MySchoolSystem.Controllers
 
                 var submittedTodo = await _context.Submitted_Assignments
                     .Include(p => p.Enrollment)
-                    .Where(assignment => assignment.Enrollment.Id == currentEnrollement.Id)
+                    .Include(p => p.Task)
+                    .Where(assignment => assignment.Enrollment.Id == currentEnrollement.Id && assignment.Task.Id == TodoId)
                     .FirstOrDefaultAsync();
-                    
+
+
+                //var ii = from assignment in _context.Submitted_Assignments
+                //         where assignment.Task.Id == TodoId && assignment.Enrollment.Id == EnrollmentId
+                //         select assignment.Task;
 
                 if (submittedTodo != null)
                 {
@@ -285,6 +290,29 @@ namespace MySchoolSystem.Controllers
             }
 
             return RedirectToAction("Details", new { id = EnrollmentId });
+        }
+
+        // POST: Enrollment/UpdatePoints
+        [HttpPost]
+        public async Task<IActionResult> UpdatePoints(int SubmittedAssignmentId, int EnrollmentId, int Points)
+        {
+            try
+            {
+                var submittedAssingment = await  _context.Submitted_Assignments
+                    .Where(assignment => assignment.Enrollment.Id == EnrollmentId && assignment.Task.Id == SubmittedAssignmentId)
+                    .FirstOrDefaultAsync();
+                //can check the max points allowed
+                if (Points >=0 && Points <=100)
+                {
+                    submittedAssingment.GradedPoints = Points;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            return RedirectToAction(nameof(Details), new { id = EnrollmentId});
         }
     }
 }

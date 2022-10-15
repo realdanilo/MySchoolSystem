@@ -89,93 +89,85 @@
     @*List all the course tasks*@
     @if (Model.Course.Todos != null)
     {
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Type
-            </th>
-            <th>
-                Rubric
-            </th>
-            <th>
-                Max Points
-            </th>
-            <th>
-                Due Date
-            </th>
-            <th>
-                Points
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var task in Model.Course.Todos)
-        {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => task.Type)
-    </td>
-    <td>
-        @*@Html.DisplayFor(modelItem => task.Rubric)*@
-        @{ var cleanRubric = task.Rubric.Substring(task.Rubric.IndexOf("wwwroot") + 7); }
-        <a href="cleanRubric" target="_blank">Rubric</a>
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => task.Points)
-    </td>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Rubric
+                    </th>
+                    <th>
+                        Max Points
+                    </th>
+                    <th>
+                        Due Date
+                    </th>
+                    <th>
+                        Points
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model.Course.Todos)
+                {
+                    <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => task.Type)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => task.Rubric)*@
+                        @{ var cleanRubric = task.Rubric.Substring(task.Rubric.IndexOf("wwwroot") + 7); }
+                        <a href="cleanRubric" target="_blank">Rubric</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => task.Points)
+                    </td>
 
-    <td>
-        @*@Html.DisplayFor(modelItem => task.ExpirationDate)*@
-        @{ var fixedTime = task.ExpirationDate.ToString("MM/dd/yyyy");}
-        @Html.DisplayFor(modelItem => fixedTime)
-    </td>
-    @foreach (var assignment in assignmentsFromServer)
-    {
-        if (assignment.Task.Id == task.Id)
-        {
-<td>
-    @*<p class="btn btn-outline-secondary">@(assignment.GradedPoints == -1? "Not Graded yet" : assignment.GradedPoints) </p>*@
-    @if (assignment.GradedPoints == -1)
-    {
-
-
-<p class="btn btn-outline-secondary">No Graded Yet</p> }
-else
-{
-<p class="btn btn-outline-secondary">@assignment.GradedPoints</p>}
-</td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => task.ExpirationDate)*@
+                        @{ var fixedTime = task.ExpirationDate.ToString("MM/dd/yyyy");}
+                        @Html.DisplayFor(modelItem => fixedTime)
+                    </td>
+                        @*check again, one assignment submitted*@
+                        @foreach (var assignment in assignmentsFromServer)
+                        {
+                            if (assignment.Task.Id == task.Id)
+                            {
+                                <td>
+                                    <form method="post" asp-controller="Enrollment" asp-action="UpdatePoints">
+                                        <input hidden value="@assignment.Id" name="SubmittedAssignmentId" />
+                                        <input hidden value="@Model.Id" name="EnrollmentId" />
+                                        <input value="@assignment.GradedPoints" name="Points" class="form-control" />
+                                        <button hidden>Update</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-secondary" target="_blank" href="@assignment.FileLocation">Check</a>
+                                </td>
+                             }
+                         }
+                        @if(!(task.ExpirationDate <= DateTime.Now))
+                        {
                             <td>
-                                <a class="btn btn-outline-secondary" target="_blank" href="@assignment.FileLocation">Check</a>
-                            </td>}
-                                                }
-    @if (!(task.ExpirationDate <= DateTime.Now))
-    {
-<td>
-    <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
-        Submit
-    </button>
-    @*Only if user is teacher: auth required*@
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalRegrade">
-        Grade
-    </button>
-</td>
-}
-</tr>}
-
-    </tbody>
-</table> }
-
-
-else
-{
-<hr />
-                <p>No tasks for this course</p>}
-
-
-
+                                <button onclick="setTodoId(@task.Id)" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+                                    Submit
+                                </button>
+                            </td>
+                         }
+                    </tr>
+                }
+            </tbody>
+        </table>
+     }
+     else
+     {
+        <hr />
+        <p>No tasks for this course</p>
+     }
 </div>
 
 
@@ -196,7 +188,6 @@ else
                     <input hidden name="CourseId" value=@Model.Course.Id />
                     <input hidden name="TodoId" value="" id="TodoIdInput" />
                     <input hidden name="EnrollmentId" value=@Model.Id />
-
 
                     <div class="input-group mb-3">
                         <div class="custom-file">
@@ -236,9 +227,14 @@ else
         </div>
     </div>
 </div>
-<script>function setTodoId(TodoId) {
+<script>
+    function setTodoId(TodoId)
+    {
         let inputField = document.getElementById("TodoIdInput")
         inputField.value = TodoId
+    }
+</script>
 
-    }</script>
-
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
