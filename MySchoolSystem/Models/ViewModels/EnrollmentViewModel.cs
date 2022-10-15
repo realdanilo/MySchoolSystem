@@ -9,32 +9,22 @@ namespace MySchoolSystem.Models.ViewModels
     {
         public int? Id { get; set; }
 
-        public int CourseId { get; set; }
         public List<SelectListItem> Courses { get; set; }
-
-        public int StudentId { get; set; }
         public List<SelectListItem> Students { get; set; }
-
-        public int PeriodId { get; set; }
-        public List<SelectListItem> Period { get; set; }
-
-        public int Year { get; set; }
-
-        public int? GradeId { get; set; }
         public List<SelectListItem> Grade { get; set; }
 
-        public bool Dropped { get; set; }
-        [Display(Name = "Open for enrollment")]
-        public bool OpenForEnrollment { get; set; }
+        public int CourseId { get; set; }
+        public int StudentId { get; set; }
+        public int? GradeId { get; set; }
 
+        public bool Dropped { get; set; }
         public string Notes { get; set; }
-        //task
-        //submitted_assignments
+
         public EnrollmentViewModel()
         {
-
         }
-        public EnrollmentViewModel(List<Course> courses, List<Student> students, List<Period> periods, List<LetterGrade> grades)
+
+        public EnrollmentViewModel(List<Course> courses, List<Student> students, List<LetterGrade> grades)
         {
             Courses = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach (Course i in courses)
@@ -58,17 +48,7 @@ namespace MySchoolSystem.Models.ViewModels
                         }
                     );
             }
-            Period = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
-            foreach (Period i in periods)
-            {
-                Period.Add(
-                        new SelectListItem()
-                        {
-                            Value = i.Id.ToString(),
-                            Text = i.SeasonName
-                        }
-                    );
-            }
+            
             Grade = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach (LetterGrade i in grades)
             {

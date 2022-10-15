@@ -32,6 +32,7 @@ namespace MySchoolSystem.Controllers
             return View(await _context.Courses
                 .Include(p => p.Instructor)
                 .Include(p => p.Subject)
+                .Include(p => p.Period)
                 .ToListAsync());
         }
 
@@ -46,6 +47,7 @@ namespace MySchoolSystem.Controllers
             Course course = await _context.Courses
                 .Include(p => p.Instructor)
                 .Include(p => p.Subject)
+                .Include(p => p.Period)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (course == null)
@@ -61,8 +63,9 @@ namespace MySchoolSystem.Controllers
         {
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
             List<Subject> subjects = await _context.Subjects.ToListAsync();
+            List<Period> periods = await _context.Periods.ToListAsync();
 
-            CourseViewModel courseViewModel = new CourseViewModel(instructors, subjects);
+            CourseViewModel courseViewModel = new CourseViewModel(instructors, subjects, periods);
             
             return View(courseViewModel);
         }
@@ -79,20 +82,26 @@ namespace MySchoolSystem.Controllers
                 Course newCourse = new Course();
                 Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
                 Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
-
+                Period period = await _context.Periods.FirstAsync(i => i.Id == courseVM.PeriodId);
                 newCourse.CreatedAt = DateTime.Now;
-                //newCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                 newCourse.Credits = courseVM.Credits;
                 newCourse.LastUpdated = DateTime.Now;
                 newCourse.Instructor = instructor;
                 newCourse.Subject = subject;
+                newCourse.Period = period;
+                newCourse.OpenForEnrollment = courseVM.OpenForEnrollment;
+                newCourse.Year = courseVM.Year;
+                newCourse.Notes = courseVM.Notes;
+                newCourse.MaxNumberStudents = courseVM.MaxNumberStudents;
                 _context.Add(newCourse);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
             List<Subject> subjects = await _context.Subjects.ToListAsync();
-            courseVM = new CourseViewModel(instructors, subjects);
+            List<Period> periods = await _context.Periods.ToListAsync();
+
+            courseVM = new CourseViewModel(instructors, subjects, periods);
             return View(courseVM);
         }
 
@@ -111,12 +120,18 @@ namespace MySchoolSystem.Controllers
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
             List<Subject> subjects = await _context.Subjects.ToListAsync();
-            CourseViewModel courseVM = new CourseViewModel(instructors, subjects);
+            List<Period> periods = await _context.Periods.ToListAsync();
+
+            CourseViewModel courseVM = new CourseViewModel(instructors, subjects,periods);
             courseVM.Credits = course.Credits;
             courseVM.InstructorId = course.Instructor.Id;
             courseVM.SubjectId = course.Subject.Id;
-            //courseVM.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
-            //check
+            courseVM.PeriodId = course.Period.Id;
+            courseVM.OpenForEnrollment = course.OpenForEnrollment;
+            courseVM.Notes = course.Notes;
+            courseVM.Year = course.Year;
+            courseVM.MaxNumberStudents = course.MaxNumberStudents;
+            //FOR EDIT POST CHECK MATCHING, AND MODELSTATE VALIDATION
             courseVM.Id = id;
             return View(courseVM);
         }
@@ -138,34 +153,35 @@ namespace MySchoolSystem.Controllers
             {
                 try
                 {
-                    
                     //Course newCourse = new Course();
                     Course updateCourse = await _context.Courses.FindAsync(courseVM.Id);
                     Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
                     Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
+                    Period period = await _context.Periods.FirstAsync(i => i.Id == courseVM.PeriodId);
 
-                    updateCourse.CreatedAt = DateTime.Now;
-                    //updateCourse.Subject = await _ context.Subjects.FindAsync(courseVM.SubjectId);
                     updateCourse.Credits = courseVM.Credits;
                     updateCourse.LastUpdated = DateTime.Now;
                     updateCourse.Instructor = instructor;
                     updateCourse.Subject = subject;
-                    //_context.Add(newCourse);
+                    updateCourse.Period = period;
+                    updateCourse.OpenForEnrollment = courseVM.OpenForEnrollment;
+                    updateCourse.Year = courseVM.Year;
+                    updateCourse.Notes = courseVM.Notes;
+                    updateCourse.MaxNumberStudents = courseVM.MaxNumberStudents;
                     _context.Update(updateCourse);
                     await _context.SaveChangesAsync();
-                  
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
-
                     throw new Exception(e.Message);
-                  
                 }
                 return RedirectToAction(nameof(Index));
             }
             List<Instructor> instructors = await _context.Instructors.ToListAsync();
             List<Subject> subjects = await _context.Subjects.ToListAsync();
-            courseVM = new CourseViewModel(instructors, subjects);
+            List<Period> periods = await _context.Periods.ToListAsync();
+
+            courseVM = new CourseViewModel(instructors, subjects,periods);
             return View(courseVM);
         }
 

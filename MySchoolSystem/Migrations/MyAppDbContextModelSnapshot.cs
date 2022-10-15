@@ -38,12 +38,29 @@ namespace MySchoolSystem.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("MaxNumberStudents")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("OpenForEnrollment")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PeriodId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("InstructorId");
+
+                    b.HasIndex("PeriodId");
 
                     b.HasIndex("SubjectId");
 
@@ -69,16 +86,7 @@ namespace MySchoolSystem.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("OpenForEnrollment")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("PeriodId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -86,8 +94,6 @@ namespace MySchoolSystem.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("GradeId");
-
-                    b.HasIndex("PeriodId");
 
                     b.HasIndex("StudentId");
 
@@ -259,11 +265,17 @@ namespace MySchoolSystem.Migrations
                         .WithMany()
                         .HasForeignKey("InstructorId");
 
+                    b.HasOne("MySchoolSystem.Models.Period", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId");
+
                     b.HasOne("MySchoolSystem.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId");
 
                     b.Navigation("Instructor");
+
+                    b.Navigation("Period");
 
                     b.Navigation("Subject");
                 });
@@ -278,10 +290,6 @@ namespace MySchoolSystem.Migrations
                         .WithMany()
                         .HasForeignKey("GradeId");
 
-                    b.HasOne("MySchoolSystem.Models.Period", "Period")
-                        .WithMany()
-                        .HasForeignKey("PeriodId");
-
                     b.HasOne("MySchoolSystem.Models.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId");
@@ -289,8 +297,6 @@ namespace MySchoolSystem.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Grade");
-
-                    b.Navigation("Period");
 
                     b.Navigation("Student");
                 });

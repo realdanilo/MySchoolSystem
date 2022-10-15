@@ -18,9 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Course)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Year)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Dropped)
             </th>
@@ -43,9 +43,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Course.Subject.SubjectName)
                     </td>
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.Year)
-                    </td>
+                    </td>*@
                     <td>
                         @Html.DisplayFor(modelItem => item.Dropped)
                     </td>

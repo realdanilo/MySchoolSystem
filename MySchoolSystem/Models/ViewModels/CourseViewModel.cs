@@ -8,28 +8,37 @@ namespace MySchoolSystem.Models.ViewModels
     public class CourseViewModel
     {
         public int? Id { get; set; }
-        //public Course Course { get; set; }
-        //[Required]
-        //public string Subject { get; set; }
-        [Required]
-        [Range(0,30)]
-        public int Credits { get; set; }
+        
         //for view
         public List<SelectListItem> Instructors { get; set; }
         public List<SelectListItem> Subjects { get; set; }
+        public List<SelectListItem> Period { get; set; }
 
         // view sets instructorId
         [Required]
-
         public int InstructorId { get; set; }
         [Required]
-
         public int SubjectId { get; set; }
+        [Required]
+        public int PeriodId { get; set; }
+        [Required]
+        public int Year { get; set; }
+        [Required]
+        [Display(Name = "Max # of students")]
+        public int MaxNumberStudents { get; set; }
+        [Display(Name = "Open for enrollment")]
+        public bool OpenForEnrollment { get; set; } = true;
+        [Required]
+        [Range(0, 30)]
+        public int Credits { get; set; }
+        public string Notes { get; set; }
+        public bool Dropped { get; set; }
+
 
         public CourseViewModel()
         {
         }
-        public CourseViewModel(List<Instructor> instructors, List<Subject> subjects)
+        public CourseViewModel(List<Instructor> instructors, List<Subject> subjects, List<Period> periods)
         {
             Instructors = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach(Instructor i in instructors)
@@ -52,6 +61,17 @@ namespace MySchoolSystem.Models.ViewModels
                         Value = i.Id.ToString(),
                         Text = String.Concat(i.SubjectName)
                     }
+                    );
+            }
+            Period = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
+            foreach (Period i in periods)
+            {
+                Period.Add(
+                        new SelectListItem()
+                        {
+                            Value = i.Id.ToString(),
+                            Text = i.SeasonName
+                        }
                     );
             }
         }

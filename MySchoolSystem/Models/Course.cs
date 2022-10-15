@@ -22,11 +22,24 @@ namespace MySchoolSystem.Models
         [Display(Name = "Last Update")]
         public DateTime LastUpdated { get; set; }
 
-       [Required]
+        [Required]
         public Instructor Instructor { get; set; }
 
-        //course HAS , but not required, todos
+        [Required]
+        public int Year { get; set; }
+        [Required]
+        public Period Period { get; set; }
 
+        [Display(Name = "Open for enrollment")]
+        public bool OpenForEnrollment { get; set; }
+
+        public string Notes { get; set; }
+
+        [Required]
+        [Display(Name = "Max # of students")]
+        public int MaxNumberStudents { get; set; }
+
+        //course HAS , but not required, todos
         public ICollection<Todo> Todos { get; set; }
     }
 }
