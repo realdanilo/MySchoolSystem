@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySchoolSystem.Models;
 
 namespace MySchoolSystem.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    partial class MyAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221016003415_OnCascadeDelete_ClientNoAction")]
+    partial class OnCascadeDelete_ClientNoAction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,17 +266,17 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.Instructor", "Instructor")
                         .WithMany()
                         .HasForeignKey("InstructorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.Period", "Period")
                         .WithMany()
                         .HasForeignKey("PeriodId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.Navigation("Instructor");
 
@@ -288,17 +290,17 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.LetterGrade", "Grade")
                         .WithMany()
                         .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.Navigation("Course");
 
@@ -312,12 +314,12 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.Enrollment", "Enrollment")
                         .WithMany("Submitted_Assignments")
                         .HasForeignKey("EnrollmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.Todo", "Task")
                         .WithMany()
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.Navigation("Enrollment");
 
@@ -329,12 +331,12 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.Course", null)
                         .WithMany("Todos")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("MySchoolSystem.Models.Enrollment", null)
                         .WithMany("Todos")
                         .HasForeignKey("EnrollmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
                 });
 
             modelBuilder.Entity("MySchoolSystem.Models.Course", b =>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 namespace MySchoolSystem.Models
 {
@@ -19,9 +20,23 @@ namespace MySchoolSystem.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Todo>().HasData(
-            //    new Todo { }
-            //    );
+            //modelBuilder.Entity<Enrollment>()
+            //    .HasOne<Course>(e => e.Course)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Submitted_Assignments>()
+            //    .HasOne<Todo>(s => s.Task)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.SetNull;
+                //will have to change back to restrict, and add property to hide/delete
+            }
+            //base.OnModelCreating(modelBuilder);
         }
     }
 }
