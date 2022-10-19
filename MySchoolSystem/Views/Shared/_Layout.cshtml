@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@*signIn from Identity Framework*@
+@inject SignInManager<IdentityUser> _signInManager;  
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -38,6 +41,12 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="LetterGrade" asp-action="Index">Grading System</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Period" asp-action="Index">School Period</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="UserAccount" asp-action="Register">Register User</a>
+                                @*checks if sign in*@
+                                @*#User param is injected into Razo pages*@
+                                @if (_signInManager.IsSignedIn(User))
+                                {
+                                    <p>@User.Identity.Name</p>
+                                }
 
                             </div>
                         </div>
