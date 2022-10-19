@@ -33,8 +33,8 @@ namespace MySchoolSystem.Models
             //foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
-                relationship.DeleteBehavior = DeleteBehavior.SetNull;
-                //will have to change back to restrict, and add property to hide/delete
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+                //will have to change back to restrict, and add property to hide/delete 
             }
             //base.OnModelCreating(modelBuilder);
         }
