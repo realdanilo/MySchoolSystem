@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace MySchoolSystem.Models
 {
-    public class MyAppDbContext : DbContext
+    public class MyAppDbContext : IdentityDbContext
     {
         public MyAppDbContext(DbContextOptions<MyAppDbContext> options) : base(options)
         {
@@ -20,6 +21,9 @@ namespace MySchoolSystem.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //for identity framework, mapping
+            base.OnModelCreating(modelBuilder);
+
             //modelBuilder.Entity<Enrollment>()
             //    .HasOne<Course>(e => e.Course)
             //    .WithMany()
@@ -36,7 +40,6 @@ namespace MySchoolSystem.Models
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
                 //will have to change back to restrict, and add property to hide/delete 
             }
-            //base.OnModelCreating(modelBuilder);
         }
     }
 }

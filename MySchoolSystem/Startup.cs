@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,12 @@ namespace MySchoolSystem
                 );
             //services.AddDbContext<MyAppDbContext>(
             //   option => option.UseSqlServer(Configuration["SQLServerSecret"]));
+
+            //adding Identity, inject to MyAppDbContext
+            services.AddIdentity<IdentityUser, IdentityRole>(options => {
+                //here we can configure our own password requirements
+                options.Password.RequiredLength = 10;
+            }).AddEntityFrameworkStores<MyAppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +58,8 @@ namespace MySchoolSystem
 
             app.UseRouting();
 
+            //for identity
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
