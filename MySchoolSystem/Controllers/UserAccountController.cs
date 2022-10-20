@@ -62,5 +62,37 @@ namespace MySchoolSystem.Controllers
             }
             return View(registerViewModel);
         }
+
+        //Post: /logout
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Redirect("/");
+        }
+
+        //Get: /log in
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        //Post: /login
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, loginViewModel.RememberMe, false) ;
+
+                if (result.Succeeded)
+                {
+                    return Redirect("/");
+                }
+                ModelState.AddModelError("Error", "Log in error");
+
+            }
+            return View(loginViewModel);
+        }
     }
 }
