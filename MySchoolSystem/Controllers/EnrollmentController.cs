@@ -220,7 +220,7 @@ namespace MySchoolSystem.Controllers
                 var checkTxt = FileUpload.FileName.Substring(FileUpload.FileName.Length - 3);
                 if (checkTxt != "txt") return NotFound();
 
-                string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public");
+                string uploadFolderPath = Path.Combine(_hostingEnv.WebRootPath, "public","assignments");
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileUpload.FileName;
 
                 string filePath = Path.Combine(uploadFolderPath, uniqueFileName);

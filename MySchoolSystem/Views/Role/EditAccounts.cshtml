@@ -1,0 +1,29 @@
+﻿@model List<MySchoolSystem.Models.ViewModels.UserRoleViewModel>;
+
+@{ ViewBag.Title = "Edit Accounts";}
+
+<h3>Accounts for @ViewBag.RoleName</h3>
+<p>Manage accounts:</p>
+
+<form method="post" asp-action="EditAccounts" asp-route-roleId="@ViewBag.RoleId">
+    <div class="row">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <input hidden asp-for="@Model[i].UserName" />
+            <input hidden asp-for="@Model[i].UserId" />
+
+            <div class="col-10">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="checkbox" asp-for="@Model[i].IsSelected">
+                        </div>
+                    </div>
+                    <label class="form-control" asp-for="@Model[i].IsSelected">@Model[i].UserName</label>
+                </div>
+            </div>
+        }
+    </div>
+    <button class="btn btn-outline-info" onclick="history.back()">Go Back</button>
+    <button type="submit" class="btn btn-outline-success">Update</button>
+</form>

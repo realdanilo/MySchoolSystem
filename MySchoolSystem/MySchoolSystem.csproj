@@ -14,6 +14,7 @@
     <None Remove="Models\ViewModels\" />
     <None Remove="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <None Remove="Views\UserAccount\" />
+    <None Remove="Views\Role\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
@@ -31,9 +32,12 @@
     <Folder Include="wwwroot\public\" />
     <Folder Include="wwwroot\public\rubrics\" />
     <Folder Include="Views\UserAccount\" />
+    <Folder Include="wwwroot\public\assignments\" />
+    <Folder Include="Views\Role\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\public\" />
     <Content Remove="wwwroot\public\rubrics\" />
+    <Content Remove="wwwroot\public\assignments\" />
   </ItemGroup>
 </Project>
