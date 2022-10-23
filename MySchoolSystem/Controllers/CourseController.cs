@@ -15,7 +15,7 @@ using MySchoolSystem.Models.ViewModels;
 namespace MySchoolSystem.Controllers
 {
     [BindProperties]
-    [Authorize]
+    [Authorize(Roles = "Instructor, Admin")]
     public class CourseController : Controller
     {
         public CourseViewModel courseVM { get; set; }
@@ -40,6 +40,7 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Course/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -258,6 +259,7 @@ namespace MySchoolSystem.Controllers
             return View(courseTodoVM);
         }
 
+        //rubric
         //POST: Course/{CourseId}/Todo
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -306,7 +308,7 @@ namespace MySchoolSystem.Controllers
             return RedirectToAction(nameof(Todos));
         }
 
-
+        //rubric
         //POST: Course/{CourseId}/UpdateTodo
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -42,6 +42,8 @@ namespace MySchoolSystem
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/UserAccount/login";
+                //ReturnUrl is binded to controller when AccessDenied
+                options.AccessDeniedPath = "/UserAccount/AccessDenied";
             });
         }
 

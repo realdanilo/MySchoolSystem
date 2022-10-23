@@ -95,5 +95,13 @@ namespace MySchoolSystem.Controllers
             }
             return View(loginViewModel);
         }
+
+        //Get: /AccessDenied?ReturnUrl
+        public IActionResult AccessDenied(string ReturnUrl)
+        {
+            //log return url events
+            Console.WriteLine(ReturnUrl);
+            return Redirect("/");
+        }
     }
 }
