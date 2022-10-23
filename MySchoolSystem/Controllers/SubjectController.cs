@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using MySchoolSystem.Models;
 
 namespace MySchoolSystem.Controllers
 {
+    [Authorize(Roles = "Instructor, Admin")]
     public class SubjectController : Controller
     {
         private readonly MyAppDbContext _context;
@@ -19,12 +21,14 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Subject
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Subjects.ToListAsync());
         }
 
         // GET: Subject/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

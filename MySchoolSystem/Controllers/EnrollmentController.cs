@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using MySchoolSystem.Models.ViewModels;
 namespace MySchoolSystem.Controllers
 {
     [BindProperties]
+    [Authorize(Roles = "Instructor, Admin, Student")]
     public class EnrollmentController : Controller
     {
         private readonly MyAppDbContext _context;
@@ -28,6 +30,7 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Enrollment
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Enrollments
@@ -37,6 +40,7 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Enrollment/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

@@ -23,6 +23,8 @@ namespace MySchoolSystem.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Alert = TempData["Alert"];
+            ViewBag.AlertMessage = TempData["AlertMessage"];
             return View();
         }
 

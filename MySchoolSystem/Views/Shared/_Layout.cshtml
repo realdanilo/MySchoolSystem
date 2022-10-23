@@ -12,6 +12,13 @@
     <link rel="icon" href="https://realdanilo.vercel.app/favicon.ico">
 </head>
 <body>
+    @*Alert, make another component?*@
+    @if (ViewBag.Alert != null)
+    {
+        <div class="alert alert-primary" role="alert">
+            @ViewBag.AlertMessage
+        </div>
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -41,6 +48,9 @@
                                 <a class="dropdown-item" asp-area="" asp-controller="Subject" asp-action="Index">Subjects</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="LetterGrade" asp-action="Index">Grading System</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Period" asp-action="Index">School Period</a>
+                                @*if admin*@
+                                <a class="dropdown-item" asp-area="" asp-controller="Role" asp-action="Index">Manage Roles</a>
+
                                 @*checks if sign in*@
                                 @*#User param is injected into Razo pages*@
                                 @if (_signInManager.IsSignedIn(User))
