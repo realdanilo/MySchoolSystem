@@ -38,6 +38,11 @@ namespace MySchoolSystem
                 //here we can configure our own password requirements
                 options.Password.RequiredLength = 10;
             }).AddEntityFrameworkStores<MyAppDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/UserAccount/login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

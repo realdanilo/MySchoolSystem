@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using MySchoolSystem.Models.ViewModels;
 namespace MySchoolSystem.Controllers
 {
     [BindProperties]
+    [Authorize]
     public class CourseController : Controller
     {
         public CourseViewModel courseVM { get; set; }
@@ -27,6 +29,7 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Course
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Courses

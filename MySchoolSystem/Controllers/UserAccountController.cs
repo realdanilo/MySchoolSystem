@@ -79,7 +79,7 @@ namespace MySchoolSystem.Controllers
 
         //Post: /login
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel, string? ReturnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,8 @@ namespace MySchoolSystem.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Redirect("/");
+                    if (ReturnUrl == null) return Redirect("/");
+                    return LocalRedirect(ReturnUrl);
                 }
                 ModelState.AddModelError("Error", "Log in error");
 
