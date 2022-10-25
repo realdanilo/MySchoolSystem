@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace MySchoolSystem.Models
@@ -23,16 +24,27 @@ namespace MySchoolSystem.Models
         {
             //for identity framework, mapping
             base.OnModelCreating(modelBuilder);
+            var role = new IdentityRole (){ Name = "Admin" };
+            modelBuilder.Entity<IdentityRole>().HasData(role);
 
-            //modelBuilder.Entity<Enrollment>()
-            //    .HasOne<Course>(e => e.Course)
-            //    .WithMany()
-            //    .OnDelete(DeleteBehavior.Cascade);
+            var hasher = new PasswordHasher<IdentityUser>();
 
-            //modelBuilder.Entity<Submitted_Assignments>()
-            //    .HasOne<Todo>(s => s.Task)
-            //    .WithMany()
-            //    .OnDelete(DeleteBehavior.Cascade);
+            var user = new IdentityUser()
+            {
+                UserName = "Admin",
+                Email = "admin@gmail.om",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "Password1@")
+            };
+            modelBuilder.Entity<IdentityUser>().HasData(user);
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            new IdentityUserRole<string>
+            {
+                RoleId = role.Id,
+                UserId = user.Id
+            }
+        );
 
             //foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

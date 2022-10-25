@@ -30,7 +30,9 @@ namespace MySchoolSystem.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            var roles = _roleManager.Roles.ToList();
+            RegisterViewModel registerViewModel = new RegisterViewModel(roles) { };
+            return View(registerViewModel);
         }
 
         //Post: /Register
@@ -51,7 +53,7 @@ namespace MySchoolSystem.Controllers
 
                 //by default, everyone who registers has student level access
                 //can change "Student to an env variable
-                IdentityRole selectedRole = _roleManager.Roles.ToList().Where(r => r.NormalizedName == registerViewModel.NormalizedName).SingleOrDefault();
+                IdentityRole selectedRole = _roleManager.Roles.ToList().Where(r => r.Id == registerViewModel.RoleId).SingleOrDefault();
                 IdentityResult roleRegistration = await _userManager.AddToRoleAsync(newUser, selectedRole.Name);
 
                 if (userRegistration.Succeeded && roleRegistration.Succeeded)
