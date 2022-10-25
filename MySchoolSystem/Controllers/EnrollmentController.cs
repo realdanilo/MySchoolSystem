@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,15 @@ namespace MySchoolSystem.Controllers
     {
         private readonly MyAppDbContext _context;
         private readonly IWebHostEnvironment _hostingEnv;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public EnrollmentViewModel enrollmentVM { get; set; }
 
-        public EnrollmentController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment)
+        public EnrollmentController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _hostingEnv = hostingEnvironment;
+            _userManager = userManager;
         }
 
         // GET: Enrollment
@@ -86,8 +89,9 @@ namespace MySchoolSystem.Controllers
         // GET: Enrollment/Create
         public async Task<IActionResult> Create()
         {
+            //List<Student> students = await _context.Students.ToListAsync();
+            IEnumerable<IdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
-            List<Student> students = await _context.Students.ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 
             EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel(courses, students, grades);
@@ -106,7 +110,8 @@ namespace MySchoolSystem.Controllers
             {
                 Enrollment newEnrollment = new Enrollment();
                 newEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
-                newEnrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentVM.StudentId);
+                //newEnrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentVM.StudentId);
+                newEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
                 _context.Add(newEnrollment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -127,8 +132,10 @@ namespace MySchoolSystem.Controllers
                 return NotFound();
             }
 
+            //List<Student> students = await _context.Students.ToListAsync();
+            IEnumerable<IdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
+
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
-            List<Student> students = await _context.Students.ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 
             EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel(courses, students, grades);
@@ -165,7 +172,7 @@ namespace MySchoolSystem.Controllers
                 {
                     //Enrollment newEnrollment = new Enrollment();
                     updateEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
-                    updateEnrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentVM.StudentId);
+                    updateEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
                     updateEnrollment.Grade = enrollmentVM.GradeId == null ? null :  await _context.LetterGrades.FirstAsync(i => i.Id == enrollmentVM.GradeId);
                     updateEnrollment.Dropped = enrollmentVM.Dropped;
                     //updateEnrollment.OpenForEnrollment = enrollmentVM.OpenForEnrollment; >> i  think this should not be available

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,13 @@ namespace MySchoolSystem.Controllers
         public CourseViewModel courseVM { get; set; }
         private readonly MyAppDbContext _context;
         private readonly IWebHostEnvironment _hostingEnv;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CourseController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment)
+        public CourseController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _hostingEnv = hostingEnvironment;
+            _userManager = userManager;
         }
 
         // GET: Course
@@ -65,7 +68,8 @@ namespace MySchoolSystem.Controllers
         // GET: Course/Create
         public async Task<IActionResult> Create()
         {
-            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            IEnumerable<IdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
             List<Subject> subjects = await _context.Subjects.ToListAsync();
             List<Period> periods = await _context.Periods.ToListAsync();
 
@@ -84,7 +88,9 @@ namespace MySchoolSystem.Controllers
             if (ModelState.IsValid)
             {
                 Course newCourse = new Course();
-                Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                //Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                IdentityUser instructor = await _userManager.FindByIdAsync(courseVM.InstructorId);
+
                 Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
                 Period period = await _context.Periods.FirstAsync(i => i.Id == courseVM.PeriodId);
                 newCourse.CreatedAt = DateTime.Now;
@@ -101,7 +107,9 @@ namespace MySchoolSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            IEnumerable<IdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+
             List<Subject> subjects = await _context.Subjects.ToListAsync();
             List<Period> periods = await _context.Periods.ToListAsync();
 
@@ -122,7 +130,9 @@ namespace MySchoolSystem.Controllers
             {
                 return NotFound();
             }
-            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            IEnumerable<IdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+
             List<Subject> subjects = await _context.Subjects.ToListAsync();
             List<Period> periods = await _context.Periods.ToListAsync();
 
@@ -159,7 +169,8 @@ namespace MySchoolSystem.Controllers
                 {
                     //Course newCourse = new Course();
                     Course updateCourse = await _context.Courses.FindAsync(courseVM.Id);
-                    Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                    //Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
+                    IdentityUser instructor = await _userManager.FindByIdAsync(courseVM.InstructorId);
                     Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
                     Period period = await _context.Periods.FirstAsync(i => i.Id == courseVM.PeriodId);
 
@@ -181,7 +192,9 @@ namespace MySchoolSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
+            IEnumerable<IdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+
             List<Subject> subjects = await _context.Subjects.ToListAsync();
             List<Period> periods = await _context.Periods.ToListAsync();
 

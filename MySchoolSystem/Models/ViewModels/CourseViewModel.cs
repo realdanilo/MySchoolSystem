@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MySchoolSystem.Models.ViewModels
@@ -16,7 +17,7 @@ namespace MySchoolSystem.Models.ViewModels
 
         // view sets instructorId
         [Required]
-        public int InstructorId { get; set; }
+        public string InstructorId { get; set; }
         [Required]
         public int SubjectId { get; set; }
         [Required]
@@ -38,16 +39,16 @@ namespace MySchoolSystem.Models.ViewModels
         public CourseViewModel()
         {
         }
-        public CourseViewModel(List<Instructor> instructors, List<Subject> subjects, List<Period> periods)
+        public CourseViewModel(IEnumerable<IdentityUser> instructors, List<Subject> subjects, List<Period> periods)
         {
             Instructors = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
-            foreach(Instructor i in instructors)
+            foreach(IdentityUser i in instructors)
             {
                 Instructors.Add(
                     new SelectListItem()
                         {
                             Value = i.Id.ToString(),
-                            Text = String.Concat(i.FirstName," ",i.LastName)
+                            Text = String.Concat(i.NormalizedUserName)
                         }
                     );
             }

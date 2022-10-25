@@ -32,7 +32,7 @@
                 @Html.DisplayFor(modelItem => item.Credits)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Instructor.FirstName) @Html.DisplayFor(modelItem => item.Instructor.LastName)
+                @Html.DisplayFor(modelItem => item.Instructor.NormalizedEmail) 
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

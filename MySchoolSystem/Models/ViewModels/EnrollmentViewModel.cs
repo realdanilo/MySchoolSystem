@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MySchoolSystem.Models.ViewModels
@@ -14,7 +15,7 @@ namespace MySchoolSystem.Models.ViewModels
         public List<SelectListItem> Grade { get; set; }
 
         public int CourseId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int? GradeId { get; set; }
 
         public bool Dropped { get; set; }
@@ -24,7 +25,7 @@ namespace MySchoolSystem.Models.ViewModels
         {
         }
 
-        public EnrollmentViewModel(List<Course> courses, List<Student> students, List<LetterGrade> grades)
+        public EnrollmentViewModel(List<Course> courses, IEnumerable<IdentityUser> students, List<LetterGrade> grades)
         {
             Courses = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach (Course i in courses)
@@ -33,18 +34,18 @@ namespace MySchoolSystem.Models.ViewModels
                         new SelectListItem()
                         {
                             Value = i.Id.ToString(),
-                            Text = String.Concat(i.Subject.SubjectName + " - " + i.Instructor.FirstName + " " + i.Instructor.LastName)
+                            Text = String.Concat(i.Subject.SubjectName + " - " + i.Instructor.NormalizedUserName)
                         }
                     );
             }
             Students = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
-            foreach (Student i in students)
+            foreach (IdentityUser i in students)
             {
                 Students.Add(
                         new SelectListItem()
                         {
                             Value = i.Id.ToString(),
-                            Text = String.Concat(i.FirstName + " " + i.LastName)
+                            Text = String.Concat(i.NormalizedUserName + " " + i.Email)
                         }
                     );
             }

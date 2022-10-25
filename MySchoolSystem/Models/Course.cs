@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace MySchoolSystem.Models
 {
@@ -23,7 +24,7 @@ namespace MySchoolSystem.Models
         public DateTime LastUpdated { get; set; }
 
         [Required]
-        public Instructor Instructor { get; set; }
+        public IdentityUser Instructor { get; set; }
 
         [Required]
         public int Year { get; set; }

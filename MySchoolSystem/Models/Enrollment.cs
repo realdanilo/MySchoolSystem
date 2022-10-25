@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace MySchoolSystem.Models
 {
@@ -12,7 +13,7 @@ namespace MySchoolSystem.Models
         [Required]
         public Course Course { get; set; }
         [Required]
-        public Student Student{ get; set; }
+        public IdentityUser Student { get; set; }
         
         public LetterGrade Grade { get; set; }
 
