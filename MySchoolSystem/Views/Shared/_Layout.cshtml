@@ -12,13 +12,6 @@
     <link rel="icon" href="https://realdanilo.vercel.app/favicon.ico">
 </head>
 <body>
-    @*Alert, make another component?*@
-    @if (ViewBag.Alert != null)
-    {
-        <div class="alert alert-primary" role="alert">
-            @ViewBag.AlertMessage
-        </div>
-    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -74,6 +67,13 @@
         </nav>
     </header>
     <div class="container">
+        @*Alert, make another component?*@
+        @if (ViewBag.Alert != null)
+        {
+            <div class="alert alert-primary" role="alert">
+                @ViewBag.AlertMessage
+            </div>
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

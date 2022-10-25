@@ -16,12 +16,14 @@ namespace MySchoolSystem.Controllers
         private readonly MyAppDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserAccountController(MyAppDbContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public UserAccountController(MyAppDbContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         //Get: /Regiser
@@ -40,24 +42,33 @@ namespace MySchoolSystem.Controllers
                 //if requirements are valid, building new user
                 IdentityUser newUser = new IdentityUser
                 {
-                    UserName = registerViewModel.Email,
+                    UserName = registerViewModel.FirstName+"_"+ registerViewModel.LastName,
                     Email = registerViewModel.Email
                 };
                 //creating the user from build
                 //passing the password here to hash it.
-                IdentityResult registered = await _userManager.CreateAsync(newUser, registerViewModel.Password);
+                IdentityResult userRegistration = await _userManager.CreateAsync(newUser, registerViewModel.Password);
 
-                if (registered.Succeeded)
+                //by default, everyone who registers has student level access
+                //can change "Student to an env variable
+                IdentityRole selectedRole = _roleManager.Roles.ToList().Where(r => r.NormalizedName == registerViewModel.NormalizedName).SingleOrDefault();
+                IdentityResult roleRegistration = await _userManager.AddToRoleAsync(newUser, selectedRole.Name);
+
+                if (userRegistration.Succeeded && roleRegistration.Succeeded)
                 {
                     //sign the new user
                     //Identity manages the sessions
                     await _signInManager.SignInAsync(newUser, false);
                     return Redirect("/");
                 }
-                //if errors
-                foreach (var error in registered.Errors)
+                //if errors for both: userRegistration ,  roleRegistration
+                foreach (var error in userRegistration.Errors)
                 {
                     ModelState.AddModelError(error.Code.ToString(),error.Description);
+                }
+                foreach (var error in roleRegistration.Errors)
+                {
+                    ModelState.AddModelError(error.Code.ToString(), error.Description);
                 }
             }
             return View(registerViewModel);
