@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -24,27 +25,35 @@ namespace MySchoolSystem.Models
         {
             //for identity framework, mapping
             base.OnModelCreating(modelBuilder);
-            var role = new IdentityRole (){ Name = "Admin" };
-            modelBuilder.Entity<IdentityRole>().HasData(role);
-
-            var hasher = new PasswordHasher<IdentityUser>();
-
-            var user = new IdentityUser()
+            //var role = new IdentityRole (){ Name = "Admin", NormalizedName = "ADMIN" };
+            List<IdentityRole> defaultRoles = new List<IdentityRole>()
             {
-                UserName = "Admin",
-                Email = "admin@gmail.om",
-                EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "Password1@")
+                new IdentityRole (){ Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole (){ Name = "User", NormalizedName = "USER" },
+                new IdentityRole (){ Name = "Instructor", NormalizedName = "INSTRUCTOR" },
+
             };
-            modelBuilder.Entity<IdentityUser>().HasData(user);
+            modelBuilder.Entity<IdentityRole>().HasData(defaultRoles);
 
-            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
-            new IdentityUserRole<string>
-            {
-                RoleId = role.Id,
-                UserId = user.Id
-            }
-        );
+            //var hasher = new PasswordHasher<IdentityUser>();
+
+            //var user = new IdentityUser()
+            //{
+            //    UserName = "Admin",
+            //    NormalizedUserName="ADMIN",
+            //    Email = "admin@gmail.om",
+            //    EmailConfirmed = true,
+            //    PasswordHash = hasher.HashPassword(null, "Password1@")
+            //};
+            //modelBuilder.Entity<IdentityUser>().HasData(user);
+
+            //modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            //new IdentityUserRole<string>
+            //{
+            //    RoleId = role.Id,
+            //    UserId = user.Id
+            //}
+            //);
 
             //foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySchoolSystem.Models;
 
 namespace MySchoolSystem.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    partial class MyAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221025232837_UserRoleCreateNormalized")]
+    partial class UserRoleCreateNormalized
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,24 +50,10 @@ namespace MySchoolSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "92c9835e-2481-4ca9-acf7-d6fcc45b1f66",
-                            ConcurrencyStamp = "e4f2834d-f642-4770-b42b-74f03763c16d",
+                            Id = "a2740142-4fd9-4c6a-a378-6e98eb41f807",
+                            ConcurrencyStamp = "0befb799-5c82-4993-bcdf-b555002f1307",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "5e13e4b5-9c74-4fc8-a62a-f4d557846578",
-                            ConcurrencyStamp = "1a7dd394-fd18-4fc8-8597-d6a652888225",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "f1c276a1-3945-455b-9a50-de572b2e03aa",
-                            ConcurrencyStamp = "72a1a040-e509-4270-8453-b0d4a210b901",
-                            Name = "Instructor",
-                            NormalizedName = "INSTRUCTOR"
                         });
                 });
 
@@ -156,6 +144,23 @@ namespace MySchoolSystem.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c2816117-8c29-4893-af58-2962b824d4fc",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a39e6ee0-9157-47b9-9842-14f490ca6752",
+                            Email = "admin@gmail.om",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOH9yK01JEeo1hRdvoE35+7hSC5dezk1w4BCP2xtpLjI7rJnoV7IbK/YBx1dcey0vg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "287ee284-4b8c-4f92-90c9-64acbce1be3f",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -217,6 +222,13 @@ namespace MySchoolSystem.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "c2816117-8c29-4893-af58-2962b824d4fc",
+                            RoleId = "a2740142-4fd9-4c6a-a378-6e98eb41f807"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

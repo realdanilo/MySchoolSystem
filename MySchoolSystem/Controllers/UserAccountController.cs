@@ -30,8 +30,8 @@ namespace MySchoolSystem.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            var roles = _roleManager.Roles.ToList();
-            RegisterViewModel registerViewModel = new RegisterViewModel(roles) { };
+            List<IdentityRole> roles = _roleManager.Roles.ToList();
+            RegisterViewModel registerViewModel = new RegisterViewModel(roles);
             return View(registerViewModel);
         }
 
@@ -44,7 +44,10 @@ namespace MySchoolSystem.Controllers
                 //if requirements are valid, building new user
                 IdentityUser newUser = new IdentityUser
                 {
-                    UserName = registerViewModel.FirstName+"_"+ registerViewModel.LastName,
+                    //UserName = registerViewModel.FirstName+"_"+ registerViewModel.LastName,
+                    //********** IMPORTANT ==> add derived class from IdentityUser to take FirstName, LastName
+                    // **** SignInManagerAsync takes Username only, not email ******
+                    UserName = registerViewModel.Email,
                     Email = registerViewModel.Email
                 };
                 //creating the user from build
@@ -73,6 +76,11 @@ namespace MySchoolSystem.Controllers
                     ModelState.AddModelError(error.Code.ToString(), error.Description);
                 }
             }
+
+            // ***** fix this *****
+            List<IdentityRole> roles = _roleManager.Roles.ToList();
+            RegisterViewModel registerViewModelWithSelectors = new RegisterViewModel(roles);
+            registerViewModel.Roles = registerViewModelWithSelectors.Roles;
             return View(registerViewModel);
         }
 

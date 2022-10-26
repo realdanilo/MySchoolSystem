@@ -31,20 +31,28 @@ namespace MySchoolSystem.Models.ViewModels
         public string ConfirmPassword { get; set; }
 
         [Required]
+        [Display(Name = "Choose default account role:")]
         public string RoleId { get; set; }
 
-        [Display(Name = "Choose default account role:")]
         public List<SelectListItem> Roles { get; set; }
 
         public RegisterViewModel()
         {
         }
 
-        public RegisterViewModel(IEnumerable<IdentityRole> roles)
+        public RegisterViewModel(List<IdentityRole> roles)
         {
-            foreach (var role in roles)
+            Roles = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
+
+            foreach (IdentityRole role in roles)
             {
-                Roles.Add( new SelectListItem() { Value = role.Id, Text = role.NormalizedName});
+                Roles.Add(
+                    new SelectListItem()
+                    {
+                        Value = role.Id,
+                        Text = role.Name
+                    }
+                );
             }
         }
     }
