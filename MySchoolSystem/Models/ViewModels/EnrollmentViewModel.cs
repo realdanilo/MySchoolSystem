@@ -25,7 +25,7 @@ namespace MySchoolSystem.Models.ViewModels
         {
         }
 
-        public EnrollmentViewModel(List<Course> courses, IEnumerable<IdentityUser> students, List<LetterGrade> grades)
+        public EnrollmentViewModel(List<Course> courses, IEnumerable<CustomIdentityUser> students, List<LetterGrade> grades)
         {
             Courses = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
             foreach (Course i in courses)
@@ -39,7 +39,7 @@ namespace MySchoolSystem.Models.ViewModels
                     );
             }
             Students = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
-            foreach (IdentityUser i in students)
+            foreach (CustomIdentityUser i in students)
             {
                 Students.Add(
                         new SelectListItem()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,46 +15,47 @@ namespace MySchoolSystem.Controllers
     public class InstructorController : Controller
     {
         private readonly MyAppDbContext _context;
+        private readonly UserManager<CustomIdentityUser> _userManager;
 
-        public InstructorController(MyAppDbContext context)
+        public InstructorController(MyAppDbContext context, UserManager<CustomIdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        //// GET: Instructor
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Index()
-        //{
-        //    return View(await _context.Instructors.ToListAsync());
-        //}
+        // GET: Instructor
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
+        {
+            return View(await _userManager.GetUsersInRoleAsync("Instructor"));
+        }
 
-        //// GET: Instructor/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Instructor/Details/5
+        public async Task<IActionResult> Details(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var instructor = await _context.Instructors
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (instructor == null)
-        //    {
-        //        return NotFound();
-        //    }
+            CustomIdentityUser instructor = await _userManager.FindByIdAsync(id);
+            if (instructor == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(instructor);
-        //}
+            return View(instructor);
+        }
 
-        //// GET: Instructor/Create
+        // GET: Instructor/Create
         //public IActionResult Create()
         //{
         //    return View();
         //}
 
-        //// POST: Instructor/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Instructor/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("Id,FirstName,LastName")] Instructor instructor)
@@ -67,25 +69,25 @@ namespace MySchoolSystem.Controllers
         //    return View(instructor);
         //}
 
-        //// GET: Instructor/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Instructor/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var instructor = await _context.Instructors.FindAsync(id);
-        //    if (instructor == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(instructor);
-        //}
+            CustomIdentityUser instructor = await _userManager.FindByIdAsync(id);
+            if (instructor == null)
+            {
+                return NotFound();
+            }
+            return View(instructor);
+        }
 
-        //// POST: Instructor/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Instructor/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName")] Instructor instructor)
@@ -118,7 +120,7 @@ namespace MySchoolSystem.Controllers
         //    return View(instructor);
         //}
 
-        //// GET: Instructor/Delete/5
+        // GET: Instructor/Delete/5
         //public async Task<IActionResult> Delete(int? id)
         //{
         //    if (id == null)
@@ -136,7 +138,7 @@ namespace MySchoolSystem.Controllers
         //    return View(instructor);
         //}
 
-        //// POST: Instructor/Delete/5
+        // POST: Instructor/Delete/5
         //[HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> DeleteConfirmed(int id)

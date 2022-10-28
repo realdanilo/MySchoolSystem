@@ -24,7 +24,7 @@ namespace MySchoolSystem.Models
         public DateTime LastUpdated { get; set; }
 
         [Required]
-        public IdentityUser Instructor { get; set; }
+        public CustomIdentityUser Instructor { get; set; }
 
         [Required]
         public int Year { get; set; }

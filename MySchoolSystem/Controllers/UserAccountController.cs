@@ -14,11 +14,11 @@ namespace MySchoolSystem.Controllers
     {
         public RegisterViewModel registerViewModel1 { get; set; }
         private readonly MyAppDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<CustomIdentityUser> _userManager;
+        private readonly SignInManager<CustomIdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserAccountController(MyAppDbContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public UserAccountController(MyAppDbContext context, UserManager<CustomIdentityUser> userManager, SignInManager<CustomIdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
@@ -42,13 +42,15 @@ namespace MySchoolSystem.Controllers
             if (ModelState.IsValid)
             {
                 //if requirements are valid, building new user
-                IdentityUser newUser = new IdentityUser
+                CustomIdentityUser newUser = new CustomIdentityUser
                 {
-                    //UserName = registerViewModel.FirstName+"_"+ registerViewModel.LastName,
-                    //********** IMPORTANT ==> add derived class from IdentityUser to take FirstName, LastName
-                    // **** SignInManagerAsync takes Username only, not email ******
+                    //********** IMPORTANT
+                    // **** PasswordSignInAsync takes username, however it will be hashed with email******
                     UserName = registerViewModel.Email,
-                    Email = registerViewModel.Email
+                    Email = registerViewModel.Email,
+                    FirstName = registerViewModel.FirstName,
+                    LastName = registerViewModel.LastName,
+                    Country = registerViewModel.Country
                 };
                 //creating the user from build
                 //passing the password here to hash it.

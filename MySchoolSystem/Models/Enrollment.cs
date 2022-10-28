@@ -13,7 +13,7 @@ namespace MySchoolSystem.Models
         [Required]
         public Course Course { get; set; }
         [Required]
-        public IdentityUser Student { get; set; }
+        public CustomIdentityUser Student { get; set; }
         
         public LetterGrade Grade { get; set; }
 

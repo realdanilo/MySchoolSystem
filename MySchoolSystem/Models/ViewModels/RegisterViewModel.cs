@@ -17,6 +17,10 @@ namespace MySchoolSystem.Models.ViewModels
         public string LastName { get; set; }
 
         [Required]
+        [Display(Name = "Country")]
+        public string Country { get; set; }
+
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 

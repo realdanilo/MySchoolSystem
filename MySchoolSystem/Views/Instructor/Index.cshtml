@@ -1,4 +1,4 @@
-@model IEnumerable<MySchoolSystem.Models.Instructor>
+@model IEnumerable<IdentityUser>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,10 +13,12 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @*@Html.DisplayNameFor(model => model.FirstName)*@
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @*@Html.DisplayNameFor(model => model.LastName)*@
+                Username
             </th>
             <th></th>
         </tr>
@@ -25,10 +27,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => item.UserName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

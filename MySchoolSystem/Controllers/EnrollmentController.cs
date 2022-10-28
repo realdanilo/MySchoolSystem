@@ -21,11 +21,11 @@ namespace MySchoolSystem.Controllers
     {
         private readonly MyAppDbContext _context;
         private readonly IWebHostEnvironment _hostingEnv;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CustomIdentityUser> _userManager;
 
         public EnrollmentViewModel enrollmentVM { get; set; }
 
-        public EnrollmentController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment, UserManager<IdentityUser> userManager)
+        public EnrollmentController(MyAppDbContext context, IWebHostEnvironment hostingEnvironment, UserManager<CustomIdentityUser> userManager)
         {
             _context = context;
             _hostingEnv = hostingEnvironment;
@@ -90,7 +90,7 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Create()
         {
             //List<Student> students = await _context.Students.ToListAsync();
-            IEnumerable<IdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
+            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 
@@ -133,7 +133,7 @@ namespace MySchoolSystem.Controllers
             }
 
             //List<Student> students = await _context.Students.ToListAsync();
-            IEnumerable<IdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
+            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
 
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();

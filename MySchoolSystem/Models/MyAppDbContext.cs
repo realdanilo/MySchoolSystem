@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace MySchoolSystem.Models
 {
-    public class MyAppDbContext : IdentityDbContext
+    public class MyAppDbContext : IdentityDbContext<CustomIdentityUser>
     {
         public MyAppDbContext(DbContextOptions<MyAppDbContext> options) : base(options)
         {

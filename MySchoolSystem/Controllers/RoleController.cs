@@ -17,9 +17,9 @@ namespace MySchoolSystem.Controllers
     {
         private readonly MyAppDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CustomIdentityUser> _userManager;
 
-        public RoleController(MyAppDbContext context,RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public RoleController(MyAppDbContext context,RoleManager<IdentityRole> roleManager, UserManager<CustomIdentityUser> userManager)
         {
             _context = context;
             _roleManager = roleManager;
@@ -112,7 +112,7 @@ namespace MySchoolSystem.Controllers
             ICollection<UserRoleViewModel> userRoleViewModel = new List<UserRoleViewModel>();
 
             //users
-            ICollection<IdentityUser> users = _userManager.Users.ToList();
+            ICollection<CustomIdentityUser> users = _userManager.Users.ToList();
 
             //build view_users
             foreach (var user in users)
@@ -149,7 +149,7 @@ namespace MySchoolSystem.Controllers
 
             foreach (var account in listUserRole)
             {
-                IdentityUser user = await _userManager.FindByIdAsync(account.UserId);
+                CustomIdentityUser user = await _userManager.FindByIdAsync(account.UserId);
 
                 //if accounts is selected and is not in role table, add to table
                 if (account.IsSelected && !(await _userManager.IsInRoleAsync(user, role.Name)))

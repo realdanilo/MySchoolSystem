@@ -34,7 +34,7 @@ namespace MySchoolSystem
             //   option => option.UseSqlServer(Configuration["SQLServerSecret"]));
 
             //adding Identity, inject to MyAppDbContext
-            services.AddIdentity<IdentityUser, IdentityRole>(options => {
+            services.AddIdentity<CustomIdentityUser, IdentityRole>(options => {
                 //here we can configure our own password requirements
                 options.Password.RequiredLength = 10;
             }).AddEntityFrameworkStores<MyAppDbContext>();

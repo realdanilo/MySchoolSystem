@@ -39,10 +39,10 @@ namespace MySchoolSystem.Models.ViewModels
         public CourseViewModel()
         {
         }
-        public CourseViewModel(IEnumerable<IdentityUser> instructors, List<Subject> subjects, List<Period> periods)
+        public CourseViewModel(IEnumerable<CustomIdentityUser> instructors, List<Subject> subjects, List<Period> periods)
         {
             Instructors = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } };
-            foreach(IdentityUser i in instructors)
+            foreach(CustomIdentityUser i in instructors)
             {
                 Instructors.Add(
                     new SelectListItem()
