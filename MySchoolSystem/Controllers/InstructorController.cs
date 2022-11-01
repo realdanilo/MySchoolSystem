@@ -48,10 +48,11 @@ namespace MySchoolSystem.Controllers
         }
 
         // GET: Instructor/Create
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
+        // Redirects to /UserAccount/Register
+        public IActionResult Create()
+        {
+            return Redirect("/UserAccount/Register?KeepOriginal=True");
+        }
 
         // POST: Instructor/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
@@ -69,6 +70,8 @@ namespace MySchoolSystem.Controllers
         //    return View(instructor);
         //}
 
+
+        // **** MOVE TO /PROFILE controller ***** =============
         // GET: Instructor/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -88,37 +91,47 @@ namespace MySchoolSystem.Controllers
         // POST: Instructor/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName")] Instructor instructor)
-        //{
-        //    if (id != instructor.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,PhoneNumber,Email,Country")] CustomIdentityUser instructor)
+        {
+            if (id != instructor.Id)
+            {
+                return NotFound();
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(instructor);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!InstructorExists(instructor.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(instructor);
-        //}
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // _context.Update(instructor);
+                    CustomIdentityUser user =  await _userManager.FindByIdAsync(instructor.Id);
+                    user.FirstName = instructor.FirstName;
+                    user.LastName = instructor.LastName;
+                    user.Country = instructor.Country;
+                    user.Email = instructor.Email;
+                    user.PhoneNumber = instructor.PhoneNumber;
+                    await _userManager.UpdateAsync(user);
+
+                    //**** check how to update password ****
+                    //await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    //var exists = await _userManager.FindByIdAsync(instructor.Id);
+                    if (await _userManager.FindByIdAsync(instructor.Id) == null)
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw new Exception(e.Message);
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(instructor);
+        }
 
         // GET: Instructor/Delete/5
         //public async Task<IActionResult> Delete(int? id)

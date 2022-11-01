@@ -1,5 +1,8 @@
 ﻿@*signIn from Identity Framework*@
-@inject SignInManager<CustomIdentityUser> _signInManager;  
+@inject SignInManager<CustomIdentityUser> _signInManager;
+@*User ID*@
+@inject UserManager<CustomIdentityUser> _userManager;
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,18 +40,18 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" asp-area="" asp-controller="Student" asp-action="Index">Students</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Instructor" asp-action="Index">Teachers</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Instructor" asp-action="Index">Instructors</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Subject" asp-action="Index">Subjects</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="LetterGrade" asp-action="Index">Grading System</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Period" asp-action="Index">School Period</a>
                                 @*if admin*@
-                                <a class="dropdown-item" asp-area="" asp-controller="Role" asp-action="Index">Manage Roles</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Role" asp-action="Index">Manage Users/Roles</a>
 
                                 @*checks if sign in*@
                                 @*#User param is injected into Razo pages*@
                                 @if (_signInManager.IsSignedIn(User))
                                 {
-                                    <p class="dropdown-item">Hi, @User.Identity.Name</p>
+                                    <a asp-controller="UserAccount" asp-action="Profile" asp-route-id="@_userManager.GetUserId(User)" class="dropdown-item">Hi, @User.Identity.Name</a>
                                     @*sign out always a post form*@
                                     <form method="post" asp-controller="UserAccount" asp-action="logout">
                                         <button type="submit" class="dropdown-item">Log out</button>

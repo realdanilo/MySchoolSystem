@@ -1,13 +1,12 @@
 ﻿@model ICollection<IdentityRole>;
-
 @{
     ViewBag.Tile = "Roles";
 }
 
 <h3>Roles:</h3>
 <a asp-action="CreateRole">Create a role</a>
-<hr/>
-@if (Model.Count ==0)
+<hr />
+@if (Model.Count == 0)
 {
     <p>No Roles</p>
 }
@@ -18,12 +17,31 @@
             <p>@role.Name</p>
         </div>
         <div class="col-8">
-            <a asp-controller="role" asp-action="Edit" class="btn btn-outline-primary" asp-route-id="@role.Id">
+            <a asp-controller="role" asp-action="Edit" class="btn btn-outline-secondary" asp-route-id="@role.Id">
                 Edit
             </a>
             <a asp-controller="role" asp-action="EditAccounts" class="btn btn-outline-primary ml-3" asp-route-roleId="@role.Id">
                 Accounts
             </a>
+        </div>
+
+    }
+</div>
+<hr />
+<h3>Users:</h3>
+<a asp-controller="UserAccount" asp-action="Register" asp-route-KeepOriginal="True">Create a user</a>
+<hr />
+<div class="row">
+    @foreach (var user in ViewBag.users)
+    {
+        <div class="col-4 mb-3">
+            <p>@user.FirstName @user.LastName</p>
+        </div>
+        <div class="col-8">
+            <a asp-controller="UserAccount" asp-action="Profile" class="btn btn-outline-info" asp-route-id="@user.Id">
+                Edit Profile
+            </a>
+            
         </div>
 
     }

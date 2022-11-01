@@ -1,0 +1,37 @@
+﻿@model CustomIdentityUser
+
+@{
+    ViewData["Title"] = "View Profile";
+}
+
+<h1>View</h1>
+
+<h4>Profile</h4>
+<hr />
+
+<div>
+    <h4>Instructor</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @*@Html.DisplayNameFor(model => model.FirstName)*@
+            Full Name
+        </dt>
+        <dd class="col-sm-10">
+            @{ var fullName = Model.FirstName + " " + Model.LastName;}
+            @Html.DisplayFor(model => fullName)
+        </dd>
+    </dl>
+</div>
+
+
+
+@*@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}*@

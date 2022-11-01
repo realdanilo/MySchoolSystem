@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MySchoolSystem.Models;
 using MySchoolSystem.Models.ViewModels;
 
@@ -37,7 +39,7 @@ namespace MySchoolSystem.Controllers
 
         //Post: /Register
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel, bool? KeepOriginal)
         {
             if (ModelState.IsValid)
             {
@@ -61,8 +63,12 @@ namespace MySchoolSystem.Controllers
                 IdentityRole selectedRole = _roleManager.Roles.ToList().Where(r => r.Id == registerViewModel.RoleId).SingleOrDefault();
                 IdentityResult roleRegistration = await _userManager.AddToRoleAsync(newUser, selectedRole.Name);
 
+
                 if (userRegistration.Succeeded && roleRegistration.Succeeded)
                 {
+                    //KeepOriginal, admin makes a new account
+                    if (KeepOriginal == true) return Redirect("/Role");
+
                     //sign the new user
                     //Identity manages the sessions
                     await _signInManager.SignInAsync(newUser, false);
@@ -128,6 +134,61 @@ namespace MySchoolSystem.Controllers
             TempData["Alert"]= true;
             TempData["AlertMessage"] = $"Access Denied from {ReturnUrl}";
             return Redirect("/");
+        }
+
+        //Get: /Profile
+        //Summary: Allows to edit Profile
+        //Needs to check if is admin or is the User
+        [Authorize(Roles = "Instructor, Admin")]
+        public async Task<IActionResult> Profile(string id)
+        {
+            CustomIdentityUser user = await _userManager.FindByIdAsync(id);
+            if (String.IsNullOrEmpty(id) || user == null) return NotFound();
+
+            return View(user);
+        }
+
+        //Post: /Profile
+        //Needs to check if is admin or is the User
+        [HttpPost]
+        [Authorize(Roles = "Instructor, Admin")]
+        public async Task<IActionResult> Profile([Bind("Id,FirstName,LastName,PhoneNumber,Email,Country")] CustomIdentityUser customIdentityUser)
+        {
+            CustomIdentityUser user = await _userManager.FindByIdAsync(customIdentityUser.Id);
+            if (user == null) return NotFound();
+
+            Console.WriteLine(ModelState.IsValid);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // _context.Update(instructor);
+                    //CustomIdentityUser user = await _userManager.FindByIdAsync(instructor.Id);
+                    user.FirstName = customIdentityUser.FirstName;
+                    user.LastName = customIdentityUser.LastName;
+                    user.Country = customIdentityUser.Country;
+                    user.Email = customIdentityUser.Email;
+                    user.PhoneNumber = customIdentityUser.PhoneNumber;
+                    await _userManager.UpdateAsync(user);
+
+                    //**** check how to update password ****
+                    //await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    throw new Exception(e.Message);
+                }
+            }
+            return RedirectToAction(nameof(Profile));
+         }
+
+        //Get: /Details
+        public async Task<IActionResult> Details(string id)
+        {
+            CustomIdentityUser user = await _userManager.FindByIdAsync(id);
+            if (String.IsNullOrEmpty(id) || user == null) return NotFound();
+             
+            return View(user);
         }
     }
 }

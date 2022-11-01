@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,9 @@ namespace MySchoolSystem.Controllers
         //Get: /
         public IActionResult Index()
         {
-            var roles = _roleManager.Roles.ToList();
+            List<IdentityRole> roles = _roleManager.Roles.ToList();
+            List<CustomIdentityUser> users = _userManager.Users.ToList();
+            ViewBag.users = users;
             return View(roles);
         }
 
