@@ -187,7 +187,7 @@ namespace MySchoolSystem.Controllers
         {
             CustomIdentityUser user = await _userManager.FindByIdAsync(id);
             if (String.IsNullOrEmpty(id) || user == null) return NotFound();
-             
+            ViewBag.Roles = await _userManager.GetRolesAsync(user);
             return View(user);
         }
     }

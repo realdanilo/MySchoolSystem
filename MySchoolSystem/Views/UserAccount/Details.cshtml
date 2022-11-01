@@ -4,13 +4,16 @@
     ViewData["Title"] = "View Profile";
 }
 
-<h1>View</h1>
+<h1>Roles:</h1>
+@foreach (var role in ViewBag.roles)
+{
+    <h4 style="display:inline-block; margin-right:10px">@role  </h4>
 
-<h4>Profile</h4>
+}
 <hr />
 
 <div>
-    <h4>Instructor</h4>
+    <h4>Details:</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -33,5 +36,5 @@
 
 
 @*@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}*@
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@

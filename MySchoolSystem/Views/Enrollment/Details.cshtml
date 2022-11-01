@@ -108,7 +108,7 @@
                     <td>
                         @*@Html.DisplayFor(modelItem => task.Rubric)*@
                         @{ var cleanRubric = task.Rubric.Substring(task.Rubric.IndexOf("wwwroot") + 7); }
-                        <a href="cleanRubric" target="_blank">Rubric</a>
+                        <a href="@cleanRubric" target="_blank">Rubric</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => task.Points)
@@ -124,11 +124,16 @@
                         {
                             if (assignment.Task.Id == task.Id)
                             {
+                                var myPoints = "N/A";
+                                if (assignment.GradedPoints != -1)
+                                {
+                                    myPoints = assignment.GradedPoints.ToString();
+                                }
                                 <td>
                                     <form method="post" asp-controller="Enrollment" asp-action="UpdatePoints">
                                         <input hidden value="@assignment.Id" name="SubmittedAssignmentId" />
                                         <input hidden value="@Model.Id" name="EnrollmentId" />
-                                        <input value="@assignment.GradedPoints" name="Points" class="form-control" />
+                                        <input value="@myPoints" name="Points" class="form-control" />
                                         <button hidden>Update</button>
                                     </form>
                                 </td>

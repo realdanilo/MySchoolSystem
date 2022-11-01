@@ -15,7 +15,7 @@ using MySchoolSystem.Models.ViewModels;
 
 namespace MySchoolSystem.Controllers
 {
-    [BindProperties]
+    [Bind]
     [Authorize(Roles = "Instructor, Admin, Student")]
     public class EnrollmentController : Controller
     {
@@ -90,7 +90,7 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Create()
         {
             //List<Student> students = await _context.Students.ToListAsync();
-            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
+            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 

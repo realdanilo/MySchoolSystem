@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +16,19 @@ namespace MySchoolSystem.Controllers
     public class StudentController : Controller
     {
         private readonly MyAppDbContext _context;
+        private readonly UserManager<CustomIdentityUser> _userManager;
 
-        public StudentController(MyAppDbContext context)
+        public StudentController(MyAppDbContext context, UserManager<CustomIdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         //// GET: Student
-        //public async Task<IActionResult> Index()
-        //{
-        //    return View(await _context.Students.ToListAsync());
-        //}
+        public async Task<IActionResult> Index()
+        {
+            return View(await _userManager.GetUsersInRoleAsync("Student"));
+        }
 
         //// GET: Student/Details/5
         //public async Task<IActionResult> Details(int? id)
@@ -62,7 +65,7 @@ namespace MySchoolSystem.Controllers
         //{
         //    if (ModelState.IsValid)
         //    {
-                
+
         //        _context.Add(student);
         //        await _context.SaveChangesAsync();
         //        return RedirectToAction(nameof(Index));

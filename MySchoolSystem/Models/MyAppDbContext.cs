@@ -29,7 +29,7 @@ namespace MySchoolSystem.Models
             List<IdentityRole> defaultRoles = new List<IdentityRole>()
             {
                 new IdentityRole (){ Name = "Admin", NormalizedName = "ADMIN" },
-                new IdentityRole (){ Name = "User", NormalizedName = "USER" },
+                new IdentityRole (){ Name = "Student", NormalizedName = "STUDENT" },
                 new IdentityRole (){ Name = "Instructor", NormalizedName = "INSTRUCTOR" },
 
             };

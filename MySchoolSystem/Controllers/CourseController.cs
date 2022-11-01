@@ -15,7 +15,7 @@ using MySchoolSystem.Models.ViewModels;
 
 namespace MySchoolSystem.Controllers
 {
-    [BindProperties]
+    [Bind]
     [Authorize(Roles = "Instructor, Admin")]
     public class CourseController : Controller
     {
