@@ -38,7 +38,8 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.Student.Id)</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Student.NormalizedUserName)
+                        @{ var studentFullName = item.Student.FirstName + " " + item.Student.LastName;}
+                        @Html.DisplayFor(modelItem => studentFullName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Course.Subject.SubjectName)

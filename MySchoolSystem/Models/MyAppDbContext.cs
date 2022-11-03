@@ -56,11 +56,11 @@ namespace MySchoolSystem.Models
             //);
 
             //foreach (var relationship in modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).SelectMany(e => e.GetForeignKeys()))
-            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-            {
-                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            //foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            //{
+                //relationship.DeleteBehavior = DeleteBehavior.Restrict;
                 //will have to change back to restrict, and add property to hide/delete 
-            }
+            //}
         }
     }
 }

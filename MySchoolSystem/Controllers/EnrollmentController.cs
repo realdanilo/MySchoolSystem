@@ -46,27 +46,23 @@ namespace MySchoolSystem.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound(); 
 
             var enrollment = await _context.Enrollments
+                .Where(e => e.Id == id)
                 .Include(p => p.Student)
                 .Include(p => p.Course.Subject)
                 .Include(p => p.Course.Instructor)
                 .Include(p => p.Grade)
                 .Include(p => p.Submitted_Assignments)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync();
 
-            //generating the TODOS for that enrollment. Can I make a static method to generate it? check..
+            if (enrollment == null) return NotFound(); 
+
+            //generating the todos for that enrollment.
+            //Can I make a static method to generate it? check..
             await _context.Courses.Where(c => c.Id == enrollment.Course.Id)
             .Include(p => p.Todos)
-            .Select( p => p.Todos)
             .FirstOrDefaultAsync();
 
             //cleaning Submittes_Assignments File Path for front end
@@ -82,14 +78,12 @@ namespace MySchoolSystem.Controllers
                 }
             }
 
-
             return View(enrollment);
         }
 
         // GET: Enrollment/Create
         public async Task<IActionResult> Create()
         {
-            //List<Student> students = await _context.Students.ToListAsync();
             IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
@@ -100,17 +94,25 @@ namespace MySchoolSystem.Controllers
         }
 
         // POST: Enrollment/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EnrollmentViewModel enrollmentVM)
         {
             if (ModelState.IsValid)
             {
+                //check if student  is already enrolled
+                bool isEnrolled = await _context.Enrollments
+                    .AnyAsync(e => (e.Course.Id == enrollmentVM.CourseId) && (e.Student.Id == enrollmentVM.StudentId));
+
+                if (isEnrolled)
+                {
+                    TempData["Alert"] = true;
+                    TempData["AlertMessage"] = $"Already Enrolled";
+                    return RedirectToAction(nameof(Create));
+                }
+
                 Enrollment newEnrollment = new Enrollment();
                 newEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
-                //newEnrollment.Student = await _context.Students.FirstAsync(i => i.Id == enrollmentVM.StudentId);
                 newEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
                 _context.Add(newEnrollment);
                 await _context.SaveChangesAsync();
@@ -122,18 +124,21 @@ namespace MySchoolSystem.Controllers
         // GET: Enrollment/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            Enrollment enrollment = await _context.Enrollments
+                .Where(e => e.Id == id)
+                .Include(p => p.Student)
+                .Include(p => p.Course)
+                .Include(p => p.Grade)
+                .FirstOrDefaultAsync();
+
+            if (enrollment == null) return NotFound(); 
 
             //List<Student> students = await _context.Students.ToListAsync();
-            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Students");
+            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
+            // Select only the student. check to improve code ***
+            students = students.Where(x => x.Id == enrollment.Student.Id);
 
             List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
@@ -150,29 +155,23 @@ namespace MySchoolSystem.Controllers
         }
 
         // POST: Enrollment/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //Sumarry: Should only allow changes on grade, notes, and enrollment status
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EnrollmentViewModel enrollmentVM)
         {
-            if (id != enrollmentVM.Id)
-            {
-                return NotFound();
-            }
+            if (id != enrollmentVM.Id) return NotFound();
+
             Enrollment updateEnrollment = await _context.Enrollments.FindAsync(id);
-            if (updateEnrollment == null)
-            {
-                return NotFound();
-            }
+            if (updateEnrollment == null) return NotFound(); 
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     //Enrollment newEnrollment = new Enrollment();
-                    updateEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
-                    updateEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
+                    //updateEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
+                    //updateEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
                     updateEnrollment.Grade = enrollmentVM.GradeId == null ? null :  await _context.LetterGrades.FirstAsync(i => i.Id == enrollmentVM.GradeId);
                     updateEnrollment.Dropped = enrollmentVM.Dropped;
                     //updateEnrollment.OpenForEnrollment = enrollmentVM.OpenForEnrollment; >> i  think this should not be available
@@ -186,7 +185,15 @@ namespace MySchoolSystem.Controllers
 
                 }
             }
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("", error.ErrorMessage);
+                }
+            }
+            return RedirectToAction(nameof(Details),new { id });
         }
 
         // GET: Enrollment/Delete/5

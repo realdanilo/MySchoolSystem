@@ -26,10 +26,11 @@
             @Html.DisplayFor(model => model.Credits)
         </dd>
         <dt class="col-sm-4">
-            @Html.DisplayNameFor(model => model.Instructor.NormalizedUserName)
+            @*@Html.DisplayNameFor(model => model.Instructor.NormalizedUserName)*@
+            Instructor
         </dt>
         <dd class="col-sm-8">
-            @{ var instructorFullName = Model.Instructor.NormalizedUserName;}
+            @{ var instructorFullName = Model.Instructor.FirstName + Model.Instructor.LastName;}
             @Html.DisplayFor(model => instructorFullName)
         </dd>
     </dl>

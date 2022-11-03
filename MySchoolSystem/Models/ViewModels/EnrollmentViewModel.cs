@@ -34,7 +34,7 @@ namespace MySchoolSystem.Models.ViewModels
                         new SelectListItem()
                         {
                             Value = i.Id.ToString(),
-                            Text = String.Concat(i.Subject.SubjectName + " - " + i.Instructor.NormalizedUserName)
+                            Text = String.Concat(i.Subject.SubjectName + " - " + i.Instructor.FirstName+" "+ i.Instructor.LastName)
                         }
                     );
             }
@@ -45,7 +45,7 @@ namespace MySchoolSystem.Models.ViewModels
                         new SelectListItem()
                         {
                             Value = i.Id.ToString(),
-                            Text = String.Concat(i.NormalizedUserName + " " + i.Email)
+                            Text = String.Concat(i.FirstName+" "+i.LastName)
                         }
                     );
             }

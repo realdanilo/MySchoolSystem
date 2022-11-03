@@ -25,14 +25,15 @@
                 @Html.DisplayNameFor(model => model.Student)
             </dt>
             <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Student.NormalizedEmail)
+                @{ var studentFullName = Model.Student.FirstName + " " + Model.Student.LastName;}
+                @Html.DisplayFor(model => studentFullName)
             </dd>
 
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.Course.Subject)
             </dt>
             <dd class="col-sm-9">
-                @{ String courseInstructorDisplay = Model.Course.Subject.SubjectName + " - " + Model.Course.Instructor.NormalizedUserName; }
+                @{ String courseInstructorDisplay = Model.Course.Subject.SubjectName + " - " + Model.Course.Instructor.FirstName+" "+ Model.Course.Instructor.LastName; }
 
                 @Html.DisplayFor(model => courseInstructorDisplay)
 

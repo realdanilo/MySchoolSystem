@@ -131,7 +131,9 @@ namespace MySchoolSystem.Controllers
             //log return url events
             Console.WriteLine(ReturnUrl);
             //To be fixed...
-            TempData["Alert"]= true;
+            //TempData["Alert"]= true;
+            //TempData["AlertMessage"] = $"Access Denied from {ReturnUrl}";
+            TempData["Alert"] = true;
             TempData["AlertMessage"] = $"Access Denied from {ReturnUrl}";
             return Redirect("/");
         }

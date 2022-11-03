@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySchoolSystem.Models;
 
 namespace MySchoolSystem.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    partial class MyAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221103030119_ClearNullableWarning")]
+    partial class ClearNullableWarning
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,22 +50,22 @@ namespace MySchoolSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "67720098-1fde-4cc9-a474-f83f6f934690",
-                            ConcurrencyStamp = "f1a61ae5-50d9-4ce7-80b5-69c1506113b1",
+                            Id = "ee7e88ab-0d1f-4adf-a8fc-c169dd6bbd35",
+                            ConcurrencyStamp = "9e654de9-a32e-4830-b8bb-3bf2d6fbdbc2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d7bb8d0d-0f6d-4c15-b2a5-099a75ebfc1b",
-                            ConcurrencyStamp = "62fdfe35-df22-4820-a33a-e31fc34a5bc4",
+                            Id = "07b51a10-e897-4f4e-be03-30e945bdbccd",
+                            ConcurrencyStamp = "a1a35ab2-5ca8-4da0-9961-09f5eeaa0f92",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = "b979bce1-9a73-4643-824a-62faba9c3578",
-                            ConcurrencyStamp = "180ffc3e-2be4-465d-ac3d-ff6364f105a6",
+                            Id = "3213b9b2-ac5a-45db-80fd-22eb9d81d292",
+                            ConcurrencyStamp = "9c72dd60-5f89-471d-a001-d0ebb21ba87e",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         });
@@ -452,7 +454,7 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -461,7 +463,7 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -470,7 +472,7 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -479,13 +481,13 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -494,7 +496,7 @@ namespace MySchoolSystem.Migrations
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -502,15 +504,18 @@ namespace MySchoolSystem.Migrations
                 {
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", "Instructor")
                         .WithMany()
-                        .HasForeignKey("InstructorId");
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.Period", "Period")
                         .WithMany()
-                        .HasForeignKey("PeriodId");
+                        .HasForeignKey("PeriodId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("SubjectId");
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Instructor");
 
@@ -523,15 +528,18 @@ namespace MySchoolSystem.Migrations
                 {
                     b.HasOne("MySchoolSystem.Models.Course", "Course")
                         .WithMany()
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.LetterGrade", "Grade")
                         .WithMany()
-                        .HasForeignKey("GradeId");
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.CustomIdentityUser", "Student")
                         .WithMany()
-                        .HasForeignKey("StudentId");
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Course");
 
@@ -544,11 +552,13 @@ namespace MySchoolSystem.Migrations
                 {
                     b.HasOne("MySchoolSystem.Models.Enrollment", "Enrollment")
                         .WithMany("Submitted_Assignments")
-                        .HasForeignKey("EnrollmentId");
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.Todo", "Task")
                         .WithMany()
-                        .HasForeignKey("TaskId");
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Enrollment");
 
@@ -559,11 +569,13 @@ namespace MySchoolSystem.Migrations
                 {
                     b.HasOne("MySchoolSystem.Models.Course", null)
                         .WithMany("Todos")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MySchoolSystem.Models.Enrollment", null)
                         .WithMany("Todos")
-                        .HasForeignKey("EnrollmentId");
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MySchoolSystem.Models.Course", b =>
