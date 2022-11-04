@@ -26,6 +26,7 @@ namespace MySchoolSystem.Models.ViewModels
         public int Year { get; set; }
         [Required]
         [Display(Name = "Max # of students")]
+        [Range(1, Int32.MaxValue)]
         public int MaxNumberStudents { get; set; }
         [Display(Name = "Open for enrollment")]
         public bool OpenForEnrollment { get; set; } = true;

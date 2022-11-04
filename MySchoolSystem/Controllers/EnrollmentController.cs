@@ -37,6 +37,7 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Enrollments
+                .Where(e => e.Dropped == false)
                 .Include(p => p.Student)
                 .Include(p => p.Course.Subject)
                 .ToListAsync());
@@ -101,13 +102,18 @@ namespace MySchoolSystem.Controllers
             if (ModelState.IsValid)
             {
                 //check if student  is already enrolled
-                bool isEnrolled = await _context.Enrollments
-                    .AnyAsync(e => (e.Course.Id == enrollmentVM.CourseId) && (e.Student.Id == enrollmentVM.StudentId));
-
+                bool isEnrolled = CheckDuplicateEnrollment(enrollmentVM);
                 if (isEnrolled)
                 {
                     TempData["Alert"] = true;
                     TempData["AlertMessage"] = $"Already Enrolled";
+                    return RedirectToAction(nameof(Create));
+                }
+                //check if there is opening
+                if(!IsEnrollmentAvailable(enrollmentVM))
+                {
+                    TempData["Alert"] = true;
+                    TempData["AlertMessage"] = $"Enrollment is Maxed Out";
                     return RedirectToAction(nameof(Create));
                 }
 
@@ -169,21 +175,13 @@ namespace MySchoolSystem.Controllers
             {
                 try
                 {
-                    //Enrollment newEnrollment = new Enrollment();
-                    //updateEnrollment.Course = await _context.Courses.FirstAsync(i => i.Id == enrollmentVM.CourseId);
-                    //updateEnrollment.Student = await _userManager.FindByIdAsync(enrollmentVM.StudentId);
-                    updateEnrollment.Grade = enrollmentVM.GradeId == null ? null :  await _context.LetterGrades.FirstAsync(i => i.Id == enrollmentVM.GradeId);
+                    updateEnrollment.Grade = enrollmentVM.GradeId == null ? null : await _context.LetterGrades.FirstAsync(i => i.Id == enrollmentVM.GradeId);
                     updateEnrollment.Dropped = enrollmentVM.Dropped;
-                    //updateEnrollment.OpenForEnrollment = enrollmentVM.OpenForEnrollment; >> i  think this should not be available
                     updateEnrollment.Notes = enrollmentVM.Notes;
                     _context.Update(updateEnrollment);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    return NotFound(e.Message);
-
-                }
+                catch (DbUpdateConcurrencyException e) { return NotFound(e.Message); }
             }
             else
             {
@@ -318,6 +316,24 @@ namespace MySchoolSystem.Controllers
                 throw new Exception(e.Message);
             }
             return RedirectToAction(nameof(Details), new { id = EnrollmentId});
+        }
+
+        private bool CheckDuplicateEnrollment(EnrollmentViewModel enrollmentVM)
+        {
+            return _context.Enrollments
+                    .Any(e => (e.Course.Id == enrollmentVM.CourseId)
+                    && (e.Student.Id == enrollmentVM.StudentId));
+        }
+
+        private bool IsEnrollmentAvailable(EnrollmentViewModel enrollmentVM)
+        {
+            int courseMax = _context.Courses.FirstOrDefault(c => c.Id == enrollmentVM.CourseId).MaxNumberStudents;
+
+            int enrollments =  _context.Enrollments
+                .Count(e => e.Course.Id == enrollmentVM.CourseId
+                && e.Dropped == false);
+
+            return enrollments <= courseMax;
         }
     }
 }

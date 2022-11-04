@@ -28,7 +28,11 @@ namespace MySchoolSystem
         {
             services.AddControllersWithViews();
             services.AddDbContext<MyAppDbContext>(
-                option => option.UseSqlServer(Configuration.GetConnectionString("SQLServer"))
+                option =>
+                    {
+                        option.UseSqlServer(Configuration.GetConnectionString("SQLServer"));
+                        //option.EnableSensitiveDataLogging();
+                    }
                 );
             //services.AddDbContext<MyAppDbContext>(
             //   option => option.UseSqlServer(Configuration["SQLServerSecret"]));

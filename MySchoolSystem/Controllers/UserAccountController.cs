@@ -14,7 +14,7 @@ namespace MySchoolSystem.Controllers
     [Bind]
     public class UserAccountController : Controller
     {
-        public RegisterViewModel registerViewModel1 { get; set; }
+        public RegisterViewModel registerViewModel { get; set; }
         private readonly MyAppDbContext _context;
         private readonly UserManager<CustomIdentityUser> _userManager;
         private readonly SignInManager<CustomIdentityUser> _signInManager;
@@ -159,7 +159,6 @@ namespace MySchoolSystem.Controllers
             CustomIdentityUser user = await _userManager.FindByIdAsync(customIdentityUser.Id);
             if (user == null) return NotFound();
 
-            Console.WriteLine(ModelState.IsValid);
             if (ModelState.IsValid)
             {
                 try

@@ -36,6 +36,7 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Courses
+                .Where(c => c.OpenForEnrollment == true)
                 .Include(p => p.Instructor)
                 .Include(p => p.Subject)
                 .Include(p => p.Period)
@@ -87,6 +88,16 @@ namespace MySchoolSystem.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Check if course already exists
+                bool courseExists = CheckDuplicateCourse(courseVM);
+
+                if (courseExists)
+                {
+                    TempData["Alert"] = true;
+                    TempData["AlertMessage"] = $"Course already exists";
+                    return RedirectToAction(nameof(Create));
+                }
+
                 Course newCourse = new Course();
                 //Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
                 CustomIdentityUser instructor = await _userManager.FindByIdAsync(courseVM.InstructorId);
@@ -120,21 +131,36 @@ namespace MySchoolSystem.Controllers
         // GET: Course/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var course = await _context.Courses.FindAsync(id);
+            if (id == null) return NotFound();
 
-            if (course == null)
-            {
-                return NotFound();
-            }
-            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            IEnumerable<CustomIdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+            Course course = await _context.Courses
+                .Where(c => c.Id == id)
+                .Include(c => c.Subject)
+                .Include(c => c.Period)
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync();
 
-            List<Subject> subjects = await _context.Subjects.ToListAsync();
-            List<Period> periods = await _context.Periods.ToListAsync();
+            //CustomIdentityUser ii = await _userManager.FindByIdAsync(course.Instructor.Id);
+            if (course == null) return NotFound();
+
+            //Authenticate
+            if (!(_userManager.GetUserId(User) == course.Instructor.Id || User.IsInRole("Admin")))
+            {
+                TempData["Alert"] = true;
+                TempData["AlertMessage"] = $"You are not the owner or have no permission";
+                return RedirectToAction(nameof(Index));
+            }
+
+            //IEnumerable<CustomIdentityUser> wont work
+            //only allow to make changes on meta data
+            List<CustomIdentityUser> instructors = new List<CustomIdentityUser>();
+            instructors.Add(course.Instructor);
+
+            List<Subject> subjects = new List<Subject>();
+            subjects.Add(course.Subject);
+
+            List<Period> periods = new List<Period>();
+            periods.Add(course.Period);
 
             CourseViewModel courseVM = new CourseViewModel(instructors, subjects,periods);
             courseVM.Credits = course.Credits;
@@ -150,35 +176,36 @@ namespace MySchoolSystem.Controllers
             return View(courseVM);
         }
 
-        // POST: Course/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //POST: Course/Edit/5
+        //Only allows changes on meta data, cannot update subject, teacher, period once created
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,CourseViewModel courseVM)
         {
-            //check
-            if (id != courseVM.Id)
+            if (id != courseVM.Id) return NotFound();
+
+            Course updateCourse = await _context.Courses.Where(c => c.Id == id)
+                .Include(c => c.Subject)
+                .Include(c => c.Period)
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync();
+
+            if (updateCourse == null) return NotFound();
+
+            //Authenticate
+            if (!(_userManager.GetUserId(User) == courseVM.InstructorId || User.IsInRole("Admin")))
             {
-                return NotFound();
+                TempData["Alert"] = true;
+                TempData["AlertMessage"] = $"You are not the owner or have no permission";
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    //Course newCourse = new Course();
-                    Course updateCourse = await _context.Courses.FindAsync(courseVM.Id);
-                    //Instructor instructor = await _context.Instructors.FindAsync(courseVM.InstructorId);
-                    CustomIdentityUser instructor = await _userManager.FindByIdAsync(courseVM.InstructorId);
-                    Subject subject = await _context.Subjects.FindAsync(courseVM.SubjectId);
-                    Period period = await _context.Periods.FirstAsync(i => i.Id == courseVM.PeriodId);
-
                     updateCourse.Credits = courseVM.Credits;
                     updateCourse.LastUpdated = DateTime.Now;
-                    updateCourse.Instructor = instructor;
-                    updateCourse.Subject = subject;
-                    updateCourse.Period = period;
                     updateCourse.OpenForEnrollment = courseVM.OpenForEnrollment;
                     updateCourse.Year = courseVM.Year;
                     updateCourse.Notes = courseVM.Notes;
@@ -192,11 +219,19 @@ namespace MySchoolSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            //List<Instructor> instructors = await _context.Instructors.ToListAsync();
-            IEnumerable<CustomIdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+            //Refactor to only show the original field. user is only allowed to change meta data.
+            //IEnumerable<CustomIdentityUser> instructors = await _userManager.GetUsersInRoleAsync("Instructor");
+            //List<Subject> subjects = await _context.Subjects.ToListAsync();
+            //List<Period> periods = await _context.Periods.ToListAsync();
 
-            List<Subject> subjects = await _context.Subjects.ToListAsync();
-            List<Period> periods = await _context.Periods.ToListAsync();
+            List<CustomIdentityUser> instructors = new List<CustomIdentityUser>();
+            instructors.Add(updateCourse.Instructor);
+
+            List<Subject> subjects = new List<Subject>();
+            subjects.Add(updateCourse.Subject);
+
+            List<Period> periods = new List<Period>();
+            periods.Add(updateCourse.Period);
 
             courseVM = new CourseViewModel(instructors, subjects,periods);
             return View(courseVM);
@@ -205,19 +240,12 @@ namespace MySchoolSystem.Controllers
         // GET: Course/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound(); 
 
             var course = await _context.Courses
                 .Include(p => p.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
-            {
-                return NotFound();
-            }
-
+            if (course == null) return NotFound(); 
             return View(course);
         }
 
@@ -235,6 +263,15 @@ namespace MySchoolSystem.Controllers
         private bool CourseExists(int id)
         {
             return _context.Courses.Any(e => e.Id == id);
+        }
+        private bool CheckDuplicateCourse(CourseViewModel courseVM)
+        {
+            return   _context.Courses
+                    .Any(c => (c.Subject.Id == courseVM.SubjectId)
+                    && (c.Instructor.Id == courseVM.InstructorId)
+                    && (c.Period.Id == courseVM.PeriodId)
+                    && (c.Year == courseVM.Year)
+                    && (c.OpenForEnrollment == true));
         }
         private bool TodoExists(int id)
         {

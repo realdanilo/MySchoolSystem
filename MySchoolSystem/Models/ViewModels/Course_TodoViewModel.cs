@@ -10,8 +10,6 @@ namespace MySchoolSystem.Models.ViewModels
         //verification
         [Required]
         public int Id { get; set; }
-        //instead of ViewBag.
-        public string? Subject { get; set; }
 
         [Required]
         [Display(Name = "Enter type of assignment:")]
@@ -33,6 +31,9 @@ namespace MySchoolSystem.Models.ViewModels
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime ExpirationDate { get; set; } = DateTime.Now;
 
+        //instead of ViewBag
+        #nullable enable
+        public string? Subject { get; set; }
         public List<Todo>? Todos { get; set; }
 
         public Course_TodoViewModel()
