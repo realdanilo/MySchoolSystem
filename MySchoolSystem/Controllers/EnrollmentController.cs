@@ -86,7 +86,9 @@ namespace MySchoolSystem.Controllers
         public async Task<IActionResult> Create()
         {
             IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
-            List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
+            List<Course> courses = await _context.Courses
+                .Where(c => c.OpenForEnrollment == true)
+                .Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 
             EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel(courses, students, grades);
@@ -136,17 +138,29 @@ namespace MySchoolSystem.Controllers
                 .Where(e => e.Id == id)
                 .Include(p => p.Student)
                 .Include(p => p.Course)
+                    .ThenInclude(c => c.Subject)
+                .Include(c => c.Course.Instructor)
                 .Include(p => p.Grade)
                 .FirstOrDefaultAsync();
 
-            if (enrollment == null) return NotFound(); 
+            if (enrollment == null) return NotFound();
 
-            //List<Student> students = await _context.Students.ToListAsync();
-            IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
-            // Select only the student. check to improve code ***
-            students = students.Where(x => x.Id == enrollment.Student.Id);
+            //Authenticate
+            if (!(_userManager.GetUserId(User) == enrollment.Course.Instructor.Id || User.IsInRole("Admin")))
+            {
+                TempData["Alert"] = true;
+                TempData["AlertMessage"] = $"You are not the owner or have no permission";
+                return RedirectToAction(nameof(Index));
+            }
 
-            List<Course> courses = await _context.Courses.Include(p => p.Subject).Include(p => p.Instructor).ToListAsync();
+            //IEnumerable<CustomIdentityUser> students = await _userManager.GetUsersInRoleAsync("Student");
+            List<CustomIdentityUser> students = new List<CustomIdentityUser>();
+            students.Add(enrollment.Student);
+
+            List<Course> courses = new List<Course>();
+            Console.WriteLine(enrollment.Course.Id);
+            courses.Add(enrollment.Course);
+
             List<LetterGrade> grades = await _context.LetterGrades.ToListAsync();
 
             EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel(courses, students, grades);
@@ -168,8 +182,19 @@ namespace MySchoolSystem.Controllers
         {
             if (id != enrollmentVM.Id) return NotFound();
 
-            Enrollment updateEnrollment = await _context.Enrollments.FindAsync(id);
-            if (updateEnrollment == null) return NotFound(); 
+            Enrollment updateEnrollment = await _context.Enrollments
+                .Include(e => e.Course.Instructor)
+                .FirstOrDefaultAsync(e => e.Id == enrollmentVM.Id);
+
+            if (updateEnrollment == null) return NotFound();
+
+            //Authenticate
+            if (!(_userManager.GetUserId(User) == updateEnrollment.Course.Instructor.Id || User.IsInRole("Admin")))
+            {
+                TempData["Alert"] = true;
+                TempData["AlertMessage"] = $"You are not the owner or have no permission";
+                return RedirectToAction(nameof(Index));
+            }
 
             if (ModelState.IsValid)
             {
@@ -322,6 +347,7 @@ namespace MySchoolSystem.Controllers
         {
             return _context.Enrollments
                     .Any(e => (e.Course.Id == enrollmentVM.CourseId)
+                    && (e.Dropped == false)
                     && (e.Student.Id == enrollmentVM.StudentId));
         }
 

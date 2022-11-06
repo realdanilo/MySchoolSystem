@@ -140,7 +140,6 @@ namespace MySchoolSystem.Controllers
                 .Include(c => c.Instructor)
                 .FirstOrDefaultAsync();
 
-            //CustomIdentityUser ii = await _userManager.FindByIdAsync(course.Instructor.Id);
             if (course == null) return NotFound();
 
             //Authenticate
