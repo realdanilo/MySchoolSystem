@@ -49,11 +49,11 @@ namespace MySchoolSystem.Controllers
         //}
 
         //// GET: Student/Create
-        //[Authorize (Roles = "Admin")]
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+        {
+            return Redirect("/UserAccount/Register?KeepOriginal=True");
+        }
 
         //// POST: Student/Create
         //// To protect from overposting attacks, enable the specific properties you want to bind to, for 

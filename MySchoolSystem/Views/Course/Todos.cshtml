@@ -56,7 +56,7 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="post" enctype="multipart/form-data" class="modal-content" asp-controller="Course" asp-route-CourseId=@Model.Id asp-action="AddTodo">
+        <form id="formToUpdateOrNewTodo" method="post" enctype="multipart/form-data" class="modal-content" asp-controller="Course" asp-route-CourseId=@Model.Id asp-action="AddTodo">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Creating assingment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -110,7 +110,8 @@
 </div>
 <script>
     let foundTodo = {};
-    let form = document.forms[0];
+    //let form = document.forms[0];
+    let form = document.getElementById("formToUpdateOrNewTodo")
     const originalForm = form.cloneNode(true);
     //make all keys lowercase for inputs  
     function toLowerKeys(obj) {
@@ -123,8 +124,9 @@
     async function getTodoReady(CourseId, TodoId) {
         try {
             let resp = await fetch(`/Todo/JSONDetails/${TodoId}`)
-            foundTodo = toLowerKeys(await resp.json())
-            getFormReady(CourseId, TodoId)
+            resp  = await resp.json()
+            foundTodo = await toLowerKeys(resp)
+            await getFormReady(CourseId, TodoId)
         }
         catch (e) {
             alert(e.message)
@@ -133,11 +135,14 @@
 
     function getFormReady(CourseId, TodoId) {
         @*form.setAttribute("method", "PUT")  >>> method not allowed, left as POST*@
+
         form.action = `/Course/${CourseId}/UpdateTodo/${TodoId}`
+
         document.getElementById("addSubmitBtn").textContent = "Update";
         //set method = put, btns value = update
 
         let data = new FormData(form);
+        
         for (let [key, value] of data) {
             //console.log(key) testing rubric
 
