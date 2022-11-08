@@ -41,7 +41,9 @@ namespace MySchoolSystem
             services.AddIdentity<CustomIdentityUser, IdentityRole>(options => {
                 //here we can configure our own password requirements
                 options.Password.RequiredLength = 10;
-            }).AddEntityFrameworkStores<MyAppDbContext>();
+            })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<MyAppDbContext>();
 
             services.ConfigureApplicationCookie(options =>
             {

@@ -141,7 +141,7 @@ namespace MySchoolSystem.Controllers
         //Get: /Profile
         //Summary: Allows to edit Profile
         //Needs to check if is admin or is the User
-        [Authorize(Roles = "Instructor, Admin")]
+        [Authorize]
         public async Task<IActionResult> Profile(string id)
         {
             CustomIdentityUser user = await _userManager.FindByIdAsync(id);
@@ -153,11 +153,14 @@ namespace MySchoolSystem.Controllers
         //Post: /Profile
         //Needs to check if is admin or is the User
         [HttpPost]
-        [Authorize(Roles = "Instructor, Admin")]
+        [Authorize]
         public async Task<IActionResult> Profile([Bind("Id,FirstName,LastName,PhoneNumber,Email,Country")] CustomIdentityUser customIdentityUser)
         {
+
             CustomIdentityUser user = await _userManager.FindByIdAsync(customIdentityUser.Id);
-            if (user == null) return NotFound();
+            CustomIdentityUser checkUser = await _userManager.GetUserAsync(User);
+
+            if (user == null || (checkUser.Id != user.Id)) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -168,7 +171,7 @@ namespace MySchoolSystem.Controllers
                     user.FirstName = customIdentityUser.FirstName;
                     user.LastName = customIdentityUser.LastName;
                     user.Country = customIdentityUser.Country;
-                    user.Email = customIdentityUser.Email;
+                    //user.Email = customIdentityUser.Email;
                     user.PhoneNumber = customIdentityUser.PhoneNumber;
                     await _userManager.UpdateAsync(user);
 
@@ -180,8 +183,67 @@ namespace MySchoolSystem.Controllers
                     throw new Exception(e.Message);
                 }
             }
-            return RedirectToAction(nameof(Profile));
+            //return RedirectToAction(nameof(Profile));
+            return Redirect("/");
          }
+
+        //Get: ResetPassword
+        [Authorize]
+        public IActionResult ResetPassword(string userId)
+        {
+            //var admin = 
+            ResetPasswordViewModel resetPasswordViewModel = new ResetPasswordViewModel()
+            {
+                UserId = userId,
+                IsAdmin = User.IsInRole("Admin"),
+            };
+            return View(resetPasswordViewModel);
+        }
+
+        //Post:/ResetPassword
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
+        {
+            Console.WriteLine(ModelState.IsValid);
+            if (ModelState.IsValid)
+            {
+                IdentityResult res;
+                //check who is making the call
+                //only admin can Reset password
+                CustomIdentityUser user = await _userManager.GetUserAsync(User);
+                if (await _userManager.IsInRoleAsync(user, "Admin") && resetPasswordViewModel.IsAdmin)
+                {
+                    //can change password without current password
+                    CustomIdentityUser userToChangePassword = await _userManager.FindByIdAsync(resetPasswordViewModel.UserId);
+                    var resetToken = await _userManager.GeneratePasswordResetTokenAsync(userToChangePassword);
+                    res = await _userManager.ResetPasswordAsync(userToChangePassword,resetToken, resetPasswordViewModel.NewPassword);
+                }
+                else
+                {
+                    //has to change password using current password
+                     res = await _userManager.ChangePasswordAsync(user, resetPasswordViewModel.CurrentPassword, resetPasswordViewModel.NewPassword);
+                }
+
+                //setting responses
+                if (res.Succeeded)
+                {
+                    TempData["Alert"] = true;
+                    TempData["AlertMessage"] = "Successful, password has been updated";
+                    return Redirect("/");
+                }
+                else
+                {
+                    foreach (var error in res.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    //return View();
+                }
+            }
+            return View();
+        }
+
 
         //Get: /Details
         public async Task<IActionResult> Details(string id)
