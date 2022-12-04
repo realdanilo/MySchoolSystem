@@ -85,7 +85,7 @@ namespace MySchoolSystem.Controllers
                 }
             }
 
-            // ***** fix this *****
+            // if model state is invalid
             List<IdentityRole> roles = _roleManager.Roles.ToList();
             RegisterViewModel registerViewModelWithSelectors = new RegisterViewModel(roles);
             registerViewModel.Roles = registerViewModelWithSelectors.Roles;
@@ -130,9 +130,6 @@ namespace MySchoolSystem.Controllers
         {
             //log return url events
             Console.WriteLine(ReturnUrl);
-            //To be fixed...
-            //TempData["Alert"]= true;
-            //TempData["AlertMessage"] = $"Access Denied from {ReturnUrl}";
             TempData["Alert"] = true;
             TempData["AlertMessage"] = $"Access Denied from {ReturnUrl}";
             return Redirect("/");
@@ -140,18 +137,22 @@ namespace MySchoolSystem.Controllers
 
         //Get: /Profile
         //Summary: Allows to edit Profile
-        //Needs to check if is admin or is the User
         [Authorize]
         public async Task<IActionResult> Profile(string id)
         {
-            CustomIdentityUser user = await _userManager.FindByIdAsync(id);
-            if (String.IsNullOrEmpty(id) || user == null) return NotFound();
-
-            return View(user);
+            bool checkAuth = CustomAuth(id);
+           
+            if (checkAuth)
+            {
+                CustomIdentityUser user = await _userManager.FindByIdAsync(id);
+                return View(user);
+            }
+            TempData["Alert"] = true;
+            TempData["AlertMessage"] = $"Access Denied";
+            return Redirect("/");
         }
 
         //Post: /Profile
-        //Needs to check if is admin or is the User
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Profile([Bind("Id,FirstName,LastName,PhoneNumber,Email,Country")] CustomIdentityUser customIdentityUser)
@@ -159,31 +160,27 @@ namespace MySchoolSystem.Controllers
 
             CustomIdentityUser user = await _userManager.FindByIdAsync(customIdentityUser.Id);
             CustomIdentityUser checkUser = await _userManager.GetUserAsync(User);
+            bool checkAuth = CustomAuth(user.Id);
 
-            if (user == null || (checkUser.Id != user.Id)) return NotFound();
+            if (user == null || (checkUser.Id != user.Id) || !checkAuth) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // _context.Update(instructor);
                     //CustomIdentityUser user = await _userManager.FindByIdAsync(instructor.Id);
+                    //user.Email = customIdentityUser.Email;
                     user.FirstName = customIdentityUser.FirstName;
                     user.LastName = customIdentityUser.LastName;
                     user.Country = customIdentityUser.Country;
-                    //user.Email = customIdentityUser.Email;
                     user.PhoneNumber = customIdentityUser.PhoneNumber;
                     await _userManager.UpdateAsync(user);
-
-                    //**** check how to update password ****
-                    //await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
                     throw new Exception(e.Message);
                 }
             }
-            //return RedirectToAction(nameof(Profile));
             return Redirect("/");
          }
 
@@ -191,7 +188,6 @@ namespace MySchoolSystem.Controllers
         [Authorize]
         public IActionResult ResetPassword(string userId)
         {
-            //var admin = 
             ResetPasswordViewModel resetPasswordViewModel = new ResetPasswordViewModel()
             {
                 UserId = userId,
@@ -205,17 +201,18 @@ namespace MySchoolSystem.Controllers
         [Authorize]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordViewModel)
         {
-            Console.WriteLine(ModelState.IsValid);
+            //Console.WriteLine(ModelState.IsValid);
+
             if (ModelState.IsValid)
             {
                 IdentityResult res;
-                //check who is making the call
-                //only admin can Reset password
+                //checking who is making the call
                 CustomIdentityUser user = await _userManager.GetUserAsync(User);
+                //if is ADMIN, can change password without current password
                 if (await _userManager.IsInRoleAsync(user, "Admin") && resetPasswordViewModel.IsAdmin)
                 {
-                    //can change password without current password
                     CustomIdentityUser userToChangePassword = await _userManager.FindByIdAsync(resetPasswordViewModel.UserId);
+                    //token can be send via email to admin for confirmation.
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(userToChangePassword);
                     res = await _userManager.ResetPasswordAsync(userToChangePassword,resetToken, resetPasswordViewModel.NewPassword);
                 }
@@ -225,7 +222,7 @@ namespace MySchoolSystem.Controllers
                      res = await _userManager.ChangePasswordAsync(user, resetPasswordViewModel.CurrentPassword, resetPasswordViewModel.NewPassword);
                 }
 
-                //setting responses
+                //logging responses
                 if (res.Succeeded)
                 {
                     TempData["Alert"] = true;
@@ -238,12 +235,10 @@ namespace MySchoolSystem.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    //return View();
                 }
             }
             return View();
         }
-
 
         //Get: /Details
         public async Task<IActionResult> Details(string id)
@@ -253,5 +248,13 @@ namespace MySchoolSystem.Controllers
             ViewBag.Roles = await _userManager.GetRolesAsync(user);
             return View(user);
         }
+
+        //Check Authentication
+        private bool CustomAuth(string userId)
+        {
+            return (userId == User.Claims.FirstOrDefault().Value || User.IsInRole("Admin"));
+           
+        }
+
     }
 }
