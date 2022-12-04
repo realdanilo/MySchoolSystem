@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="icon" href="https://realdanilo.vercel.app/favicon.ico">
+    <script src="~/js/geolocation.js"></script>
 </head>
 <body>
     <header>
@@ -75,14 +76,6 @@
         </nav>
     </header>
     <div class="container">
-        @*Alert, make another component?*@
-        @*@if (ViewBag.Alert != null)
-        {
-            <div class="alert alert-primary" role="alert">
-                @ViewBag.AlertMessage
-            </div>
-        }*@
-        @*Test TempData instead of ViewBag.Alert*@
         @if (TempData["Alert"] != null)
         {
             <div class="alert alert-primary" role="alert">
@@ -105,3 +98,6 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+<script>
+    @*GetLocation();*@
+</script>
